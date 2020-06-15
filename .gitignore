@@ -1,0 +1,9 @@
+# Node Modules in parent directory
+node_modules/*
+
+# Node Modules in Client directory
+interface/node_modules/*
+
+.env
+
+.DS_Store
