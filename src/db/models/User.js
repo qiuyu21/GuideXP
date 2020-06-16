@@ -2,7 +2,7 @@ module.exports = function (mongoose) {
   const User = new mongoose.Schema({
     Role: {
       type: Number,
-      enum: [1, 2, 3], //1:Admin 2:Manager 3:Staff
+      enum: [1, 2, 3, 4], //1:Admin 2:Manager 3:Staff 4:Developer
       required: true,
     },
     First_Name: {
@@ -29,6 +29,7 @@ module.exports = function (mongoose) {
     Active: {
       type: Boolean,
       required: true,
+      default: false,
     },
     Hash: {
       type: String,
