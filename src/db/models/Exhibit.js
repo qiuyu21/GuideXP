@@ -22,19 +22,7 @@ module.exports = function (mongoose) {
       ],
       required: true,
     },
-    Lock: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-    Passcode: {
-      type: String,
-      maxlength: 32,
-    },
-    Exhibit_Identifier: {
-      type: String,
-      maxlength: 10,
-    },
+    Exhibit_Identifier: Number,
     Name: {
       type: String,
       required: true,

@@ -1,18 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../db/db");
+const { User, Customer } = db.models;
+const AuthController = require("../controllers/authController");
+//
+const authController = AuthController(User, Customer);
 
 /**
  * LOGIN ROUTE [POST]
  * /auth/login
  */
-router.route("/login").post();
+router.post("/login", authController.postLogin);
 
 /**
  * REGISTER NEW CUSTOMER ROUTE [POST]
  * /auth/register
- * -
+ * - GiudeXP register a new customer
+ * - Also create a manager type
  */
-router.route("/register").post();
+router.post("/register", authController.postCreateSingleCustomer);
 
 /**
  * FORGET PASSWORD ROUTE [GET]
@@ -20,21 +26,22 @@ router.route("/register").post();
  * - check if a emails exist
  * - send a reset password link to the email
  */
-router.route("/forget").get();
+router.get("/forget", authController.getForget);
 
 /**
- * Method: [POST]
+ * Method: [GET,POST]
  * Endpoint: /auth/reset/:userId/:token
  * -
  */
-router.route("/reset/:userId/:token").post();
+router.get("/reset/:userId/:token", authController.getReset);
+router.post("/reset/:userId/:token", authController.postReset);
 
 /**
- * Method: [POST]
+ * Method: [GET]
  * Endpoint: /auth/active/:userId/:token
  * - activate user account
  *
  */
-router.route("/active/:userId/:token").post();
+router.get("/active/:userId/:token", authController.getActivateAccount);
 
 module.exports = router;
