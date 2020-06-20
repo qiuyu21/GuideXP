@@ -1,20 +1,26 @@
 const mongoose = require("mongoose");
-//Models references
-const UserModel = require("./models/User");
-const CustomerModel = require("./models/Customer");
-const ExhibitModel = require("./models/Exhibit");
-const ExhibitionModel = require("./models/Exhibition");
-const TranslationModel = require("./models/Translation");
+const UserSchema = require("./schemas/User");
+const CustomerSchema = require("./schemas/Customer");
+const ExhibitSchema = require("./schemas/Exhibit");
+const ExhibitionSchema = require("./schemas/Exhibition");
+const TranslationSchema = require("./schemas/Translation");
+
+//Models
+const User = mongoose.model("User", UserSchema(mongoose));
+const Customer = mongoose.model("Customer", CustomerSchema(mongoose));
+const Exhibit = mongoose.model("Exhibit", ExhibitSchema(mongoose));
+const Exhibition = mongoose.model("Exhibition", ExhibitionSchema(mongoose));
+const Translation = mongoose.model("Translation", TranslationSchema(mongoose));
 
 //
 const db = {};
 db.mongoose = mongoose;
 db.models = {};
-db.models.User = UserModel(mongoose);
-db.models.Customer = CustomerModel(mongoose);
-db.models.TranslationModel = TranslationModel(mongoose);
-db.models.ExhibitModel = ExhibitModel(mongoose);
-db.models.ExhibitionModel = ExhibitionModel(mongoose);
+db.models.User = User;
+db.models.Customer = Customer;
+db.models.ExhibitModel = Exhibit;
+db.models.ExhibitionModel = Exhibition;
+db.models.TranslationModel = Translation;
 
 //database connection settings
 const options = {

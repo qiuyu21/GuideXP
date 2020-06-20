@@ -1,5 +1,3 @@
-const { model } = require("mongoose");
-
 /**
  * There are 3 types of users in GuideXP Content Management system.
  * There is a Customer table in the db, but there is no CUSTOMER type user

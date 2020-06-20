@@ -15,4 +15,9 @@ router.route("/").post();
  */
 router.route("/register").post();
 
+/**
+ *
+ */
+router.route("/password").post();
+
 module.exports = router;
