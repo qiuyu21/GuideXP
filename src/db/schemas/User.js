@@ -64,7 +64,7 @@ module.exports = function (mongoose) {
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // required: true,
     },
   });
   return User;
