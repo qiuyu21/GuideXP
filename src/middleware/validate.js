@@ -1,5 +1,5 @@
 const validate = require("../helper/validateHelper");
-//Validate the body inside
+//Validate the request body
 module.exports = async function (req, res, next) {
   try {
     await validate(req.body);

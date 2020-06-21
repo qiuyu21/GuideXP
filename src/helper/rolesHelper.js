@@ -23,8 +23,8 @@ const GUIDEXP = 1;
 const MANAGER = 2;
 const STAFF = 3;
 
-module.exports = {
+module.exports = Object.freeze({
   GUIDEXP,
   MANAGER,
   STAFF,
-};
+});
