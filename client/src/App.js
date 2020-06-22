@@ -2,14 +2,17 @@ import React from "react";
 import Login from "./components/login/login";
 import Forget from "./components/login/forget";
 import Index from "./components/dashboard/index";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Redirect } from "react-router-dom";
+import RouteProtected from "./components/protectedRoute";
+import RouteUnprotected from "./components/unprotectedRoute";
 
 function App() {
   return (
     <Switch>
-      <Route path="/index" component={Index} />
-      <Route path="/login" component={Login} />
-      <Route path="/password/reset" component={Forget} />
+      <RouteUnprotected path="/login" component={Login} />
+      <RouteUnprotected path="/password/reset" component={Forget} />
+      <RouteProtected exact path="/" component={Index} />
+      <Redirect from="/" to="/" />
     </Switch>
   );
 }

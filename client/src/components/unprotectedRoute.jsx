@@ -3,19 +3,14 @@ import { Route, Redirect } from "react-router-dom";
 import authService from "../services/authServices";
 
 //protected route component
-export default function RouteProtected({
-  path,
-  component: Component,
-  render,
-  ...rest
-}) {
+export default function RouteUnprotected({ path, component: Component }) {
   return (
     <Route
-      {...rest}
+      path={path}
       render={(props) => {
         const user = authService.getUser();
-        if (!user) return <Redirect to="/login" />;
-        return Component ? <Component {...props} user={user} /> : render(props);
+        if (user) return <Redirect to="/" />;
+        return <Component {...props} />;
       }}
     />
   );

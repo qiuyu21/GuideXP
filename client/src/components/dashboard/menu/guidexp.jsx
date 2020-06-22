@@ -33,14 +33,9 @@ export default function Guidexp() {
           <Link>New Customer</Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="user" title="User" icon={<TeamOutlined />}>
-        <Menu.Item key="user_list">
-          <Link>User list</Link>
-        </Menu.Item>
-        <Menu.Item key="new_user">
-          <Link>New User</Link>
-        </Menu.Item>
-      </SubMenu>
+      <Menu.Item key="user" mode="inline" icon={<TeamOutlined />}>
+        <Link>User</Link>
+      </Menu.Item>
       <Menu.Item key="setting" mode="inline" icon={<SettingOutlined />}>
         <Link>Setting</Link>
       </Menu.Item>

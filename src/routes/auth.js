@@ -6,54 +6,38 @@ const { User, Customer } = db.models;
 const asyncMiddleware = require("../middleware/async");
 //
 const AuthController = require("../controllers/authController");
-const {
-  postLogin,
-  postCreateSingleCustomer,
-  getForget,
-  getReset,
-  postReset,
-  getActivateUser,
-} = AuthController(User, Customer);
+const { postLogin, postForget, getReset, postReset } = AuthController(
+  User,
+  Customer
+);
 
 //middleware
 const validate = require("../middleware/validate");
 
 /**
- * LOGIN ROUTE [POST]
- * /auth/login
+ * Permission: All
+ * Request Body Data: {email, password}
+ * Response Status Code: 200, 400, 403
  */
 router.post("/login", asyncMiddleware(postLogin));
 
 /**
- * REGISTER NEW CUSTOMER ROUTE [POST]
- * /auth/register
- * - GiudeXP register a new customer
- * - Also create a manager type
+ * Permission: All
+ * Request Body Data: {email}
+ * Response Status Code: 204, 400, 403
  */
-router.post("/register", asyncMiddleware(postCreateSingleCustomer));
+router.post("/forget", asyncMiddleware(postForget));
 
 /**
- * FORGET PASSWORD ROUTE [GET]
- * /auth/forget
- * - check if a emails exist
- * - send a reset password link to the email
- */
-router.get("/forget", asyncMiddleware(getForget));
-
-/**
- * Method: [GET,POST]
- * Endpoint: /auth/reset/:userId/:token
- * -
- */
-router.get("/reset/:userId/:token", asyncMiddleware(getReset));
-router.post("/reset/:userId/:token", asyncMiddleware(postReset));
-
-/**
- * Method: [GET]
- * Endpoint: /auth/active/:userId/:token
- * - activate user account
+ * Permission: All
  *
  */
-router.get("/active/:userId/:token", asyncMiddleware(getActivateUser));
+router.get("/reset/:userId/:token", asyncMiddleware(getReset));
+
+/**
+ * Permission: All
+ * Request Body Data: {password}
+ */
+router.post("/reset/:userId/:token", asyncMiddleware(postReset));
 
 module.exports = router;

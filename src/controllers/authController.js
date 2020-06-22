@@ -21,54 +21,23 @@ function AuthController(User, Customer) {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .send("Invalid username or password");
-  }
 
-  /**
-   * GUIDEXP admin create a new customer
-   * Tables:
-   *  - Customer => insert customer name and customer description and create a new customer_id
-   *  - User => insert a new user with the customer_id and ROLE=MANAGER
-   *
-   * Send activation link to the email with the randomly generated password
-   */
-  async function postCreateSingleCustomer(req, res) {
-    const { name, description, email, first_name, last_name } = req.body;
-    const customer = new Customer();
-    customer.Name = name;
-    customer.Description = description;
-    //generate a random password and activation string
-    const password = crypto.randomBytes(4).toString("hex");
-    const hash = crypto.randomBytes(32).toString("hex");
-    const update = {
-      $setOnInsert: {
-        Role: 2,
-        First_Name: first_name,
-        Last_Name: last_name,
-        Password: password,
-        Hash: hash,
-        Customer_Id: customer._id,
-        Active: false,
-      },
-    };
-    let doc = await User.findOneAndUpdate({ Email: email }, update, {
-      new: true,
-      upsert: true,
-      rawResult: true,
-      runValidators: true,
-    });
-    if (doc.lastErrorObject.updatedExisting)
-      res.status(HttpStatus.BAD_REQUEST).send("User already exists");
-
-    await customer.save();
-    //Todo: send an email to user
-
-    res.status(HttpStatus.OK).send("User has been created.");
+    const token = await jwthelper.sign(user._doc);
+    res.status(HttpStatus.OK).send(token);
   }
 
   /**
    *User forgot password and get a reset password link
    */
-  function getForget(req, res) {}
+  async function postForget(req, res) {
+    const { email } = req.body;
+    let user = await User.findOne({ Email: email });
+    if (!user) return res.status(HttpStatus.NO_CONTENT).send();
+    if (!user.Acitve)
+      return res.status(HttpStatus.FORBIDDEN).send("User is not active");
+    //generate a hash
+    //check the last forgot date
+  }
 
   /**
    *
@@ -77,18 +46,11 @@ function AuthController(User, Customer) {
 
   function postReset(req, res) {}
 
-  function getActivateUser(req, res) {}
-
-  function postActivateUser(req, res) {}
-
   return {
     postLogin,
-    postCreateSingleCustomer,
-    getForget,
+    postForget,
     getReset,
     postReset,
-    getActivateUser,
-    postActivateUser,
   };
 }
 

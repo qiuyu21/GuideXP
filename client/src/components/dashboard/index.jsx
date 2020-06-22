@@ -1,14 +1,18 @@
 import React, { useState, Fragment } from "react";
-import { Layout, Typography, Menu } from "antd";
+import { Layout, Typography } from "antd";
 import "./index.css";
 import Guidexp from "./menu/guidexp";
 import Manager from "./menu/manager";
 import Staff from "./menu/staff";
+import RoleHelper from "../../services/roleServices";
+// import RouteProtected from "../protectedRoute";
+import { Switch } from "react-router-dom";
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
 
-export default function Index() {
+export default function Index(props) {
+  const { user } = props;
   return (
     <Fragment>
       <Layout style={{ minHeight: "100vh" }}>
@@ -26,9 +30,14 @@ export default function Index() {
             collapsedWidth={0}
             trigger={null}
           >
-            <Guidexp />
+            {/* different roles display different menus */}
+            {user.Role === RoleHelper.GUIDEXP && <Guidexp />}
+            {user.Role === RoleHelper.MANAGER && <Manager />}
+            {user.Role === RoleHelper.STAFF && <Staff />}
           </Sider>
-          <Content>CONTENT</Content>
+          <Content>
+            <Switch></Switch>
+          </Content>
         </Layout>
       </Layout>
     </Fragment>
