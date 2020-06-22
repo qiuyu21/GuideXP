@@ -1,7 +1,7 @@
 const HttpStatus = require("../helper/httpHelper");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const tokenHelper = require("../helper/tokenHelper");
+const jwthelper = require("../helper/tokenHelper");
 
 function AuthController(User, Customer) {
   /**
@@ -66,15 +66,20 @@ function AuthController(User, Customer) {
   }
 
   /**
-   * User
+   *User forgot password and get a reset password link
    */
   function getForget(req, res) {}
 
+  /**
+   *
+   */
   function getReset(req, res) {}
 
   function postReset(req, res) {}
 
-  function getActivateAccount(req, res) {}
+  function getActivateUser(req, res) {}
+
+  function postActivateUser(req, res) {}
 
   return {
     postLogin,
@@ -82,7 +87,8 @@ function AuthController(User, Customer) {
     getForget,
     getReset,
     postReset,
-    getActivateAccount,
+    getActivateUser,
+    postActivateUser,
   };
 }
 

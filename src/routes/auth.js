@@ -12,7 +12,7 @@ const {
   getForget,
   getReset,
   postReset,
-  getActivateAccount,
+  getActivateUser,
 } = AuthController(User, Customer);
 
 //middleware
@@ -54,6 +54,6 @@ router.post("/reset/:userId/:token", asyncMiddleware(postReset));
  * - activate user account
  *
  */
-router.get("/active/:userId/:token", asyncMiddleware(getActivateAccount));
+router.get("/active/:userId/:token", asyncMiddleware(getActivateUser));
 
 module.exports = router;
