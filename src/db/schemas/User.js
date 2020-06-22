@@ -24,7 +24,7 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
       minlength: 8,
-      maxlength: 255,
+      maxlength: 256,
     },
     Active: {
       type: Boolean,
@@ -61,7 +61,7 @@ module.exports = function (mongoose) {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },
-    created_by: {
+    Created_By: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       // required: true,
