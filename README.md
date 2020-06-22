@@ -1,34 +1,35 @@
-# GUIDEXP ADMIN SYSTEM 
+# GUIDEXP ADMIN SYSTEM
 
-## Development Tools 
+## Development Tools
 
-1. Front End 
+1. Front End
 
-* ReactJS + Ant Design for UI components
+- ReactJS + Ant Design for UI components
 
+2. Back End
 
-2. Back End 
+- Node (Javascript Runtime)
 
-* Node (Javascript Runtime)
+- Express.js (Web framework)
 
-* Express.js (Web framework) 
-
-* MongoDB (Database)
+- MongoDB (Database)
 
 ## Backend Setup
 
-* Make sure you have nodejs and MongoDB installed on your local envirnoment.
+- Make sure you have nodejs and MongoDB installed on your local envirnoment.
 
-* Run `npm i` in the root directory to install required packages.
+- Run `npm i` in the root directory to install required packages.
 
-* Create a .env file in the root directory and copy everything inside .env-template into .env. Then fill out .env.
+- Create a .env file in the root directory and copy everything inside .env-template into .env. Then fill out .env.
 
-* Run `node app.js` to run the backend.
-
+- Run `node app.js` to run the backend.
 
 ## Frontend Setup
 
-* Run `npm i` in the `./client` directory. 
+- Run `npm i` in the `./client` directory.
 
-* Run `npm start` to start the frontend.
- 
+- Run `npm start` to start the frontend.
+
+## Database Design
+
+![](gxp-model.png)

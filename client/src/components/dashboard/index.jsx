@@ -26,7 +26,7 @@ export default function Index() {
             collapsedWidth={0}
             trigger={null}
           >
-            <Manager />
+            <Guidexp />
           </Sider>
           <Content>CONTENT</Content>
         </Layout>
