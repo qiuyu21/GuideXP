@@ -33,3 +33,5 @@
 ## Database Design
 
 ![](gxp-model.png)
+
+- https://app.lucidchart.com/documents/view/74dc46a3-9369-4b2e-a337-6eb3b2eb0668
