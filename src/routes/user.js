@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 const { User, Customer } = db.models;
+const { mongoose } = db;
 //
 const asyncMiddleware = require("../middleware/async");
 const tokenMiddleware = require("../middleware/token");
@@ -19,11 +20,12 @@ const {
   postCreateSingleStaff,
   postActivateUser,
   postDeactivateUser,
-} = UserController(User, Customer);
+} = UserController(mongoose, User, Customer);
 
 //Every route here is not open to the public. thus the following middleware is used.
 router.use(tokenMiddleware);
 //With that being said, every route is accessible by only users from one or some roles, thus using authoizationMiddleware.
+//checkout ../middleware/auth.js to find the format of permission parameter for authorizationMiddleware(permission) method.
 
 /**
  * Permission: GUIDEXP
