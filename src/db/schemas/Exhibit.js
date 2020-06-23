@@ -11,15 +11,7 @@ module.exports = function (mongoose) {
     },
     Exhibit_Status: {
       type: String,
-      enum: [
-        "Created",
-        "Submitted",
-        "Approved",
-        "Rejected",
-        "Ready",
-        "Paused",
-        "Deleted",
-      ],
+      enum: ["Created", "Ready", "Paused", "Deleted"],
       required: true,
     },
     Exhibit_Identifier: Number,

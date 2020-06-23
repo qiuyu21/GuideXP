@@ -1,18 +1,30 @@
-const HttpStatus = require("../helper/httpHelper");
 const ROLE = require("../helper/roleHelper");
-const crypto = require("crypto");
 const RegisterUserHelper = require("../helper/registerHelper");
 
 function UserController(mongoose, User, Customer) {
   /**
    * User: GUIDEXP
-   * Get all customers
+   * - Get all Customers
+   * - Support Query String & Pagination
+   *
+   * Return Array[
+   *  Name of Customer (e.g. National Capital Exhibition),
+   *  Email of Manager,
+   *  #Exhibition,
+   *  #Exhibits
+   * ]
    */
   async function getAllCustomer(req, res) {}
 
   /**
    * User: GUIDEXP
-   * Get all MANAGER type users
+   *  - Get all MANAGER type users
+   *
+   * Return Array[
+   *   First Name,
+   *   Last Name,
+   *    Email,
+   * ]
    */
   async function getAllManager(req, res) {}
 
@@ -67,6 +79,10 @@ function UserController(mongoose, User, Customer) {
     await register(ROLE.STAFF);
   }
 
+  /**
+   * User: MANAGER STAFF
+   *
+   */
   async function postActivateUser(req, res) {}
 
   async function postDeactivateUser(req, res) {}

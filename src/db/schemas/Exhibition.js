@@ -8,15 +8,7 @@ module.exports = function (mongoose) {
     },
     Exhibition_Status: {
       type: String,
-      enum: [
-        "Created",
-        "Submitted",
-        "Approved",
-        "Rejected",
-        "Ready",
-        "Paused",
-        "Deleted",
-      ],
+      enum: ["Created", "Ready", "Paused", "Deleted"],
       required: true,
     },
     Lock: {

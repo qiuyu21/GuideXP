@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const HttpStatus = require("../helper/httpHelper");
-const RoleHelper = require("../helper/roleHelper");
+const HttpStatus = require("./httpHelper");
+const RoleHelper = require("./roleHelper");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {

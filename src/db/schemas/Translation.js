@@ -4,6 +4,10 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
+    Translation_Status: {
+      type: String,
+      enum: ["Created", "Ready", "Paused", "Deleted"],
+    },
     Name: {
       type: String,
       required: true,
