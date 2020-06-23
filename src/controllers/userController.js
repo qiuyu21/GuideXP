@@ -54,6 +54,7 @@ function UserController(User, Customer) {
     //generate a random password and activation string
     const password = crypto.randomBytes(4).toString("hex");
     const hash = crypto.randomBytes(32).toString("hex");
+    const query = { Email: email };
     const update = {
       $setOnInsert: {
         Role: 2,
@@ -65,12 +66,16 @@ function UserController(User, Customer) {
         Active: false,
       },
     };
-    let doc = await User.findOneAndUpdate({ Email: email }, update, {
+    let doc = await User.findOneAndUpdate(query, update, {
+      //new:true return the document after update was applied
+      //upsert: if no document matches filter, mongodb will insert one by combining filter and update
+      //rawResult: return the raw result from the mongodb driver
       new: true,
       upsert: true,
       rawResult: true,
       runValidators: true,
     });
+    //check whether it is an upsert
     if (doc.lastErrorObject.updatedExisting)
       res.status(HttpStatus.BAD_REQUEST).send("User already exists");
 

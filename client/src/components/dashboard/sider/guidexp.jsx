@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -17,7 +17,7 @@ export default function Guidexp() {
   return (
     <Menu mode="inline">
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
-        <Link>Dashboard</Link>
+        <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
       <Menu.Item key="exhibit" mode="inline" icon={<PictureOutlined />}>
         <Link>Exhibit</Link>
@@ -30,7 +30,7 @@ export default function Guidexp() {
           <Link>Customer List</Link>
         </Menu.Item>
         <Menu.Item key="new_customer">
-          <Link>New Customer</Link>
+          <Link to="/customer/new">New Customer</Link>
         </Menu.Item>
       </SubMenu>
       <Menu.Item key="user" mode="inline" icon={<TeamOutlined />}>

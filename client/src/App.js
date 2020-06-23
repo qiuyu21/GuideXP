@@ -11,8 +11,7 @@ function App() {
     <Switch>
       <RouteUnprotected path="/login" component={Login} />
       <RouteUnprotected path="/password/reset" component={Forget} />
-      <RouteProtected exact path="/" component={Index} />
-      <Redirect from="/" to="/" />
+      <RouteProtected path="/" component={Index} />
     </Switch>
   );
 }

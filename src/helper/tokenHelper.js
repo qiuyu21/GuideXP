@@ -10,14 +10,11 @@ async function sign(data) {
 }
 
 async function verify(token) {
-  try {
-    const decoded = await jwt.verify(token, process.env.KEY, {
-      algorithms: ["HS256"],
-    });
-    return decoded;
-  } catch (err) {
-    return err;
-  }
+  //Calling function need to catch error and return 401 response
+  const decoded = await jwt.verify(token, process.env.KEY, {
+    algorithms: ["HS256"],
+  });
+  return decoded;
 }
 
 function decode(token) {

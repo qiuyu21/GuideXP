@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -19,12 +19,24 @@ export default function Manager(props) {
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
         <Link>Dashboard</Link>
       </Menu.Item>
-      <Menu.Item key="exhibit" mode="inline" icon={<PictureOutlined />}>
-        <Link>Exhibit</Link>
-      </Menu.Item>
-      <Menu.Item key="exhibition" mode="inline" icon={<AppstoreOutlined />}>
-        <Link>Exhibition</Link>
-      </Menu.Item>
+      <SubMenu key="exhibit" title="Exhibit" icon={<PictureOutlined />}>
+        <Menu.Item key="exhibit_list">
+          <Link>Exhibit list</Link>
+        </Menu.Item>
+        <Menu.Item key="new_exhibit">
+          <Link>New Exhibit</Link>
+        </Menu.Item>
+      </SubMenu>
+
+      <SubMenu key="exhibition" title="Exhibition" icon={<AppstoreOutlined />}>
+        <Menu.Item key="exhibition_list">
+          <Link>Exhibition list</Link>
+        </Menu.Item>
+        <Menu.Item key="new_exhibition">
+          <Link>New Exhibition</Link>
+        </Menu.Item>
+      </SubMenu>
+
       <SubMenu key="user" title="User" icon={<TeamOutlined />}>
         <Menu.Item key="user_list">
           <Link>User list</Link>
