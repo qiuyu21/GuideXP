@@ -24,6 +24,7 @@ module.exports = function (mongoose) {
       required: true,
     },
     Translation: [require("./Translation")(mongoose)],
+    Last_Modified: Date,
   });
   return Exhibit;
 };

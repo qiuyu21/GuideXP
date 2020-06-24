@@ -9,10 +9,14 @@ function UserController(mongoose, User, Customer) {
    *
    * Return Array[
    *  Name of Customer (e.g. National Capital Exhibition),
+   *  Descripton of Customer,
    *  Email of Manager,
    *  #Exhibition,
-   *  #Exhibits
+   *  #Exhibits,
+   *  Created date,
+   *  
    * ]
+   * 
    */
   async function getAllCustomer(req, res) {}
 
@@ -23,7 +27,8 @@ function UserController(mongoose, User, Customer) {
    * Return Array[
    *   First Name,
    *   Last Name,
-   *    Email,
+   *   Email,
+   *   
    * ]
    */
   async function getAllManager(req, res) {}

@@ -8,6 +8,11 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
+    Customer_Status: {
+      type: Boolean,
+      require: true,
+      default: true,
+    },
   });
   return Customer;
 };

@@ -16,6 +16,7 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
+    Last_Modified: Date,
   });
   return Translation;
 };
