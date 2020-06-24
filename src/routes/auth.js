@@ -15,27 +15,27 @@ const { postLogin, postForget, getReset, postReset } = AuthController(
 const validate = require("../middleware/validate");
 
 /**
- * Permission: All
+ * Permission: GUIDEXP MANAGER STAFF
  * Request Body Data: {email, password}
  * Response Status Code: 200, 400, 403
  */
 router.post("/login", asyncMiddleware(postLogin));
 
 /**
- * Permission: All
+ * Permission: GUIDEXP MANAGER STAFF
  * Request Body Data: {email}
  * Response Status Code: 204, 400, 403
  */
 router.post("/forget", asyncMiddleware(postForget));
 
 /**
- * Permission: All
+ * Permission: GUIDEXP MANAGER STAFF
  *
  */
 router.get("/reset/:userId/:token", asyncMiddleware(getReset));
 
 /**
- * Permission: All
+ * Permission: GUIDEXP MANAGER STAFF
  * Request Body Data: {password}
  */
 router.post("/reset/:userId/:token", asyncMiddleware(postReset));

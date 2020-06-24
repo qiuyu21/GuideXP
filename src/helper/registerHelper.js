@@ -51,6 +51,7 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
       customer._id = customer_id;
       customer.Name = data.name;
       customer.Description = data.description;
+      customer.Status = false;
       await customer.save();
     }
     //Todo:

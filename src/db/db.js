@@ -13,6 +13,7 @@ const Exhibit = mongoose.model("Exhibit", ExhibitSchema(mongoose));
 const Exhibition = mongoose.model("Exhibition", ExhibitionSchema(mongoose));
 const Translation = mongoose.model("Translation", TranslationSchema(mongoose));
 const Access = mongoose.model("Access", AccessSchema(mongoose));
+
 //
 const db = {};
 db.mongoose = mongoose;

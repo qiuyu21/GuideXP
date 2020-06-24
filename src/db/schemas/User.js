@@ -67,5 +67,6 @@ module.exports = function (mongoose) {
       // required: true,
     },
   });
+
   return User;
 };

@@ -20,6 +20,7 @@ const {
   postCreateSingleStaff,
   postActivateUser,
   postDeactivateUser,
+  postPermission,
 } = UserController(mongoose, User, Customer);
 
 //Every route here is not open to the public. thus the following middleware is used.
@@ -32,7 +33,7 @@ router.use(tokenMiddleware);
  */
 router.get(
   "/customer",
-  authorizationMiddleware(0b001),
+  authorizationMiddleware(0b011),
   asyncMiddleware(getAllCustomer)
 );
 
@@ -116,6 +117,15 @@ router.put(
   "/deactivate/:userId",
   authorizationMiddleware(0b011),
   asyncMiddleware(postDeactivateUser)
+);
+
+/**
+ * Permission MANAGER
+ */
+router.post(
+  "/permission",
+  authorizationMiddleware(0b010),
+  asyncMiddleware(postPermission)
 );
 
 module.exports = router;

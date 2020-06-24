@@ -8,10 +8,10 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
-    Customer_Status: {
+    Status: {
       type: Boolean,
       require: true,
-      default: true,
+      default: false,
     },
   });
   return Customer;

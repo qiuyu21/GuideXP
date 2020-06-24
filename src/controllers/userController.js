@@ -7,28 +7,51 @@ function UserController(mongoose, User, Customer) {
    * - Get all Customers
    * - Support Query String & Pagination
    *
+   * Query:
+   * sort=[name, email, exhibition, exhibit, date]-[asc, desc]
+   * active=ture/false
+   * page=number
+   *
    * Return Array[
-   *  Name of Customer (e.g. National Capital Exhibition),
-   *  Descripton of Customer,
+   *  Customer_Id,
+   *  Name of Customer,
+   *  Manager_Id,
    *  Email of Manager,
    *  #Exhibition,
    *  #Exhibits,
-   *  Created date,
-   *  
+   *  Created date
+   *  Status
    * ]
-   * 
+   *
    */
-  async function getAllCustomer(req, res) {}
+  async function getAllCustomer(req, res) {
+    // const { query: queryString } = req.query;
+    // if (!queryString.page) queryString.page = 0;
+    // const dbquery = {};
+    // if (queryString.sort) {
+    //   const [key, value] = queryString.sort.split("-");
+    //   dbquery[key] = value === "asc" ? 1 : -1;
+    // }
+    const query = await Customer.find(null, null, { lean: true });
+    res.send(query);
+  }
 
   /**
    * User: GUIDEXP
    *  - Get all MANAGER type users
    *
+   * Query:
+   * sort=[first_name, last_name, email, Name of Customer]-[asc, desc]
+   *
    * Return Array[
+   *   Customer_Id,
+   *   Name of Customer,
+   *   Manager_Id,
    *   First Name,
    *   Last Name,
    *   Email,
-   *   
+   *   Staff Number,
+   *   Status
    * ]
    */
   async function getAllManager(req, res) {}
@@ -36,6 +59,27 @@ function UserController(mongoose, User, Customer) {
   /**
    * User: GUIDEXP, MANAGER
    * Get all STAFF type users based on a MANAGER id
+   *
+   * Query:
+   * sort=[first_name, last_name, email]
+   *
+   * GUIDEXP:
+   * Return Array[
+   *  Customer_Id,
+   *  Name of Customer,
+   *  First Name
+   *  Last Name,
+   *  Email,
+   *  Status
+   * ]
+   *
+   * MANAGER:
+   * Return Array[
+   *   First Name,
+   *   Last Name,
+   *   Email,
+   *   Status,
+   * ]
    */
   async function getAllStaff(req, res) {}
 
@@ -92,6 +136,8 @@ function UserController(mongoose, User, Customer) {
 
   async function postDeactivateUser(req, res) {}
 
+  async function postPermission(req, res) {}
+
   return {
     getAllCustomer,
     getAllManager,
@@ -103,6 +149,7 @@ function UserController(mongoose, User, Customer) {
     postCreateSingleStaff,
     postActivateUser,
     postDeactivateUser,
+    postPermission,
   };
 }
 
