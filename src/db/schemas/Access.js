@@ -13,7 +13,7 @@ module.exports = function (mongoose) {
       type: mongoose.Schema.Types.ObjectId,
       refPath: "OnModel",
     },
-    Access: [
+    Permission: [
       {
         Language_Code: {
           type: String,
