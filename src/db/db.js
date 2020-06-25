@@ -20,10 +20,10 @@ db.mongoose = mongoose;
 db.models = {};
 db.models.User = User;
 db.models.Customer = Customer;
-db.models.ExhibitModel = Exhibit;
-db.models.ExhibitionModel = Exhibition;
-db.models.TranslationModel = Translation;
-db.models.AccessModel = Access;
+db.models.Exhibit = Exhibit;
+db.models.Exhibition = Exhibition;
+db.models.Translation = Translation;
+db.models.Access = Access;
 
 //database connection settings
 const options = {

@@ -13,6 +13,8 @@ module.exports = function (mongoose) {
       require: true,
       default: false,
     },
+    Subscription_Start: Date,
+    Subscription_End: Date,
   });
   return Customer;
 };

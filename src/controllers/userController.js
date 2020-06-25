@@ -1,7 +1,8 @@
 const ROLE = require("../helper/roleHelper");
 const RegisterUserHelper = require("../helper/registerHelper");
+const httpHelper = require("../helper/httpHelper");
 
-function UserController(mongoose, User, Customer) {
+function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
   /**
    * User: GUIDEXP
    * - Get all Customers
@@ -25,15 +26,68 @@ function UserController(mongoose, User, Customer) {
    *
    */
   async function getAllCustomer(req, res) {
-    // const { query: queryString } = req.query;
-    // if (!queryString.page) queryString.page = 0;
-    // const dbquery = {};
-    // if (queryString.sort) {
-    //   const [key, value] = queryString.sort.split("-");
-    //   dbquery[key] = value === "asc" ? 1 : -1;
-    // }
-    const query = await Customer.find(null, null, { lean: true });
-    res.send(query);
+    // Query String validation
+    const { query: queryString } = req;
+
+    const query = {};
+    if (!queryString.page) query.page = 0;
+    else query.page = queryString.page;
+
+    if (queryString.sort) {
+      const [key, value] = queryString.sort.split("-");
+
+      if (
+        ["name", "email", "exhibition", "exhibit", "date"].includes(key) &&
+        ["asc", "desc"].includes(value)
+      )
+        query.sort = { key: value === "asc" ? 1 : -1 };
+      else return res.status(httpHelper.BAD_REQUEST).send();
+    }
+
+    const customers = await Customer.find()
+      .limit(20)
+      .skip(query.page * 20)
+      .lean();
+
+    let promisegroup1 = [],
+      promisesgroup2 = [],
+      promisesgroup3 = [];
+
+    for (const customer of customers) {
+      promisegroup1.push(
+        User.findOne(
+          { Customer_Id: customer._id, Role: ROLE.MANAGER },
+          "_id Email",
+          { lean: true }
+        )
+      );
+    }
+
+    for (const customer of customers) {
+      promisesgroup2.push(
+        Exhibition.find({ Customer_Id: customer._id }).count(function (
+          err,
+          numOfDocs
+        ) {})
+      );
+    }
+
+    for (const customer of customers) {
+      promisesgroup3.push(
+        Exhibit.find({ Customer_Id: customer._id }).count(function (
+          err,
+          numOfDocs
+        ) {})
+      );
+    }
+
+    const p1 = Promise.all(promisegroup1).then((values) => {});
+
+    const p2 = Promise.all(promisesgroup2).then((values) => {});
+
+    const p3 = Promise.all(promisesgroup3).then((values) => {});
+
+    Promise.all([p1, p2, p3]).then((values) => {});
   }
 
   /**

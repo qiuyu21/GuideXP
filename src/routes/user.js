@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
-const { User, Customer } = db.models;
+const { User, Customer, Exhibit, Exhibition } = db.models;
 const { mongoose } = db;
 //
 const asyncMiddleware = require("../middleware/async");
@@ -21,7 +21,7 @@ const {
   postActivateUser,
   postDeactivateUser,
   postPermission,
-} = UserController(mongoose, User, Customer);
+} = UserController(mongoose, User, Customer, Exhibit, Exhibition);
 
 //Every route here is not open to the public. thus the following middleware is used.
 router.use(tokenMiddleware);
