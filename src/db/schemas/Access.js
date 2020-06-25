@@ -1,5 +1,9 @@
 module.exports = function (mongoose) {
   const UserAccess = new mongoose.Schema({
+    Customer_Id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+    },
     OnModel: {
       type: String,
       enum: ["Exhibit", "Exhibition"],

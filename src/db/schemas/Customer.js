@@ -9,9 +9,10 @@ module.exports = function (mongoose) {
       required: true,
     },
     Status: {
-      type: Boolean,
+      type: String,
+      enum: ["Active", "Not Active"],
       require: true,
-      default: false,
+      default: "Not Active",
     },
     Subscription_Start: Date,
     Subscription_End: Date,

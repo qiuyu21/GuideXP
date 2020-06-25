@@ -13,16 +13,16 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
    * active=ture/false
    * page=number
    *
-   * Return Array[
-   *  Customer_Id,
-   *  Name of Customer,
-   *  Manager_Id,
-   *  Email of Manager,
+   * Return:
+   * Array[Object{
+   *  _id(Customer),
+   *  Name(Customer),
+   *  Status(Customer)
+   *  _id(User where Role === MANAGER),
+   *  Email(User where Role === MANAGER),
    *  #Exhibition,
    *  #Exhibits,
-   *  Created date
-   *  Status
-   * ]
+   * }]
    *
    */
   async function getAllCustomer(req, res) {
@@ -97,16 +97,17 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
    * Query:
    * sort=[first_name, last_name, email, Name of Customer]-[asc, desc]
    *
-   * Return Array[
-   *   Customer_Id,
-   *   Name of Customer,
-   *   Manager_Id,
-   *   First Name,
-   *   Last Name,
-   *   Email,
-   *   Staff Number,
-   *   Status
-   * ]
+   * Return:
+   * Array[Object{
+   *   _id(Customer),
+   *   Name(Customer),
+   *   _id(User where Role === MANAGER),
+   *   First_Name(User),
+   *   Last_Name(User),
+   *   Email(User),
+   *   Status (User)
+   *   #Staff
+   * }]
    */
   async function getAllManager(req, res) {}
 
@@ -118,40 +119,117 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
    * sort=[first_name, last_name, email]
    *
    * GUIDEXP:
-   * Return Array[
-   *  Customer_Id,
-   *  Name of Customer,
-   *  First Name
-   *  Last Name,
-   *  Email,
-   *  Status
-   * ]
+   * Return:
+   * Array[Object{
+   *  _id(Customer),
+   *  Name(Customer),
+   *  First_Name(User)
+   *  Last_Name(User),
+   *  Email(User),
+   *  Status(User)
+   * }]
    *
    * MANAGER:
-   * Return Array[
-   *   First Name,
-   *   Last Name,
-   *   Email,
-   *   Status,
-   * ]
+   * Return:
+   * Array[Object{
+   *   First_Name(User),
+   *   Last_Name(User),
+   *   Email(User),
+   *   Status(User)
+   * }]
    */
   async function getAllStaff(req, res) {}
 
   /**
    * User: GUIDEXP
+   * Return:
+   * Obeject({
+   *  _id(Customer),
+   *  Name(Customer),
+   *  Description(Customer),
+   *  Customer_Status(Customer),
+   *  Subscription_Start(Customer),
+   *  Subscription_End(Customer),
+   *  _id(User),
+   *  Email(User),
+   *  #Exhibits,
+   *  #Exhibitions
+   * })
    *
+   * 1: FindOne from User table using customer_id and Role = 2
+   * 2: Populate the customer from customer_id
    */
-  async function getSingleCustomer(req, res) {}
+  async function getSingleCustomer(req, res) {
+    const customer_id = req.params.userId;
+
+    const p1 = User.findOne({
+      Customer_Id: customer_id,
+      Role: ROLE.MANAGER,
+    })
+      .populate("Customer_Id")
+      .lean();
+
+    const p2 = Exhibition.countDocuments({ Customer_Id: customer_id });
+
+    const p3 = Exhibit.countDocuments({ Customer_Id: customer_id });
+
+    Promise.all([p1, p2, p3]).then((values) =>
+      res.status(httpHelper.OK).send(values)
+    );
+  }
 
   /**
    * User: GUIDEXP
+   * Return:
+   * Object({
+   *  _id(Customer),
+   *  Name(Customer),
+   *  _id(User where Role == MANAGER),
+   *  Email(User),
+   *  First_Name(User),
+   *  Last_Name(User)
+   * })
    */
-  async function getSingleManager(req, res) {}
+  async function getSingleManager(req, res) {
+    const customer_id = req.params.customerId;
+    const user_id = req.params.userId;
+    const doc = await User.findOne({
+      Customer_Id: customer_id,
+      _id: user_id,
+    })
+      .populate("Customer_Id")
+      .lean();
+
+    return res.status(httpHelper.OK).send(doc);
+  }
 
   /**
    * User: GUIDEXP, MANAGER
+   * Return:
+   * Object({
+   *  First_Name(User),
+   *  Last_Name(User),
+   *  Email (User),
+   *  Active (User),
+   *  Array[
+   *    {Model, Model_Id, Language_Code}
+   *  ](Permission)
+   * })
+   *
    */
-  async function getSingleStaff(req, res) {}
+  async function getSingleStaff(req, res) {
+    const user_id = req.params.userId;
+    const customer_id = req.params.customerId;
+    if (req.user.Role === ROLE.GUIDEXP) {
+      //GUIDEXP making this request
+      const p1 = User.findOne({
+        Customer_Id: customer_id,
+        _id: user_id,
+      });
+    } else {
+      //MANAGER making this request
+    }
+  }
 
   /**
    * GUIDEXP create a new customer

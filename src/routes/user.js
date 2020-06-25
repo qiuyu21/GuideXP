@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
-const { User, Customer, Exhibit, Exhibition } = db.models;
+const { User, Customer, Exhibit, Exhibition, Access } = db.models;
 const { mongoose } = db;
 //
 const asyncMiddleware = require("../middleware/async");
@@ -21,7 +21,7 @@ const {
   postActivateUser,
   postDeactivateUser,
   postPermission,
-} = UserController(mongoose, User, Customer, Exhibit, Exhibition);
+} = UserController(mongoose, User, Customer, Exhibit, Exhibition, Access);
 
 //Every route here is not open to the public. thus the following middleware is used.
 router.use(tokenMiddleware);
@@ -60,7 +60,7 @@ router.get(
  */
 router.get(
   "/customer/:userId",
-  authorizationMiddleware(0b001),
+  authorizationMiddleware(0b011),
   asyncMiddleware(getSingleCustomer)
 );
 
@@ -68,7 +68,7 @@ router.get(
  * Permission: GUIDEXP
  */
 router.get(
-  "/manager/:userId",
+  "/manager/:customerId/:userId", //Customer Id & User Id are the indexes in User table
   authorizationMiddleware(0b001),
   asyncMiddleware(getSingleManager)
 );
@@ -77,7 +77,7 @@ router.get(
  * Permission: GUIDEXP MANAGER
  */
 router.get(
-  "/staff/:userId",
+  "/staff/:customerId/:userId",
   authorizationMiddleware(0b011),
   asyncMiddleware(getSingleStaff)
 );
