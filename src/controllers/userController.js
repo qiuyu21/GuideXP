@@ -2,7 +2,7 @@ const ROLE = require("../helper/roleHelper");
 const RegisterUserHelper = require("../helper/registerHelper");
 const httpHelper = require("../helper/httpHelper");
 
-function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
+function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
   /**
    * User: GUIDEXP
    * - Get all Customers
@@ -220,15 +220,22 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition) {
   async function getSingleStaff(req, res) {
     const user_id = req.params.userId;
     const customer_id = req.params.customerId;
-    if (req.user.Role === ROLE.GUIDEXP) {
-      //GUIDEXP making this request
-      const p1 = User.findOne({
-        Customer_Id: customer_id,
-        _id: user_id,
-      });
-    } else {
-      //MANAGER making this request
-    }
+
+    //MANAGER make a request
+    if (req.user.Role === ROLE.MANAGER && customer_id !== req.user.Customer_Id)
+      return res.status(httpHelper.FORBIDDEN).send();
+
+    const p1 = User.findOne({
+      Customer_Id: customer_id,
+      _id: user_id,
+    });
+    const p2 = Access.find({
+      Customer_Id: customer_id,
+    }).populate({ path: "Permission", match: { User_Id: user_id } });
+
+    Promise.all(p1, p2).then((values) => {
+      return res.status(httpHelper.OK).send(values);
+    });
   }
 
   /**

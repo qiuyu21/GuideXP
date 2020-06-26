@@ -10,12 +10,18 @@ module.exports = function (mongoose) {
     },
     Status: {
       type: String,
-      enum: ["Active", "Not Active"],
+      enum: ["Active", "Not Active", "Member", "Expire"],
       require: true,
       default: "Not Active",
     },
     Subscription_Start: Date,
     Subscription_End: Date,
+    Free_Trial: {
+      type: Boolean,
+      require: true,
+      default: false,
+    },
+    Free_Trial_End: Date,
   });
   return Customer;
 };
