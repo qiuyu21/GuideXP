@@ -56,7 +56,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     for (const customer of customers) {
       promisegroup1.push(
         User.findOne(
-          { Customer_Id: customer._id, Role: ROLE.MANAGER },
+          { Customer: customer._id, Role: ROLE.MANAGER },
           "_id Email",
           { lean: true }
         )
@@ -65,7 +65,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
 
     for (const customer of customers) {
       promisesgroup2.push(
-        Exhibition.find({ Customer_Id: customer._id }).count(function (
+        Exhibition.find({ Customer: customer._id }).count(function (
           err,
           numOfDocs
         ) {})
@@ -74,7 +74,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
 
     for (const customer of customers) {
       promisesgroup3.push(
-        Exhibit.find({ Customer_Id: customer._id }).count(function (
+        Exhibit.find({ Customer: customer._id }).count(function (
           err,
           numOfDocs
         ) {})
@@ -163,15 +163,15 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     const customer_id = req.params.userId;
 
     const p1 = User.findOne({
-      Customer_Id: customer_id,
+      Customer: customer_id,
       Role: ROLE.MANAGER,
     })
       .populate("Customer_Id")
       .lean();
 
-    const p2 = Exhibition.countDocuments({ Customer_Id: customer_id });
+    const p2 = Exhibition.countDocuments({ Customer: customer_id });
 
-    const p3 = Exhibit.countDocuments({ Customer_Id: customer_id });
+    const p3 = Exhibit.countDocuments({ Customer: customer_id });
 
     Promise.all([p1, p2, p3]).then((values) =>
       res.status(httpHelper.OK).send(values)
@@ -194,10 +194,10 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     const customer_id = req.params.customerId;
     const user_id = req.params.userId;
     const doc = await User.findOne({
-      Customer_Id: customer_id,
+      Customer: customer_id,
       _id: user_id,
     })
-      .populate("Customer_Id")
+      .populate("Customer")
       .lean();
 
     return res.status(httpHelper.OK).send(doc);
@@ -219,18 +219,18 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    */
   async function getSingleStaff(req, res) {
     const user_id = req.params.userId;
-    const customer_id = req.params.customerId;
+    const customer = req.params.customer;
 
     //MANAGER make a request
-    if (req.user.Role === ROLE.MANAGER && customer_id !== req.user.Customer_Id)
+    if (req.user.Role === ROLE.MANAGER && customer !== req.user.Customer)
       return res.status(httpHelper.FORBIDDEN).send();
 
     const p1 = User.findOne({
-      Customer_Id: customer_id,
+      Customer: customer,
       _id: user_id,
     });
     const p2 = Access.find({
-      Customer_Id: customer_id,
+      Customer: customer,
     }).populate({ path: "Permission", match: { User_Id: user_id } });
 
     Promise.all(p1, p2).then((values) => {

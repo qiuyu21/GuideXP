@@ -1,12 +1,12 @@
 const mongoose = require("../db");
 module.exports = function (mongoose) {
   const Exhibition = new mongoose.Schema({
-    Customer_Id: {
+    Customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
     },
-    Exhibition_Status: {
+    Status: {
       type: String,
       enum: ["Created", "Ready", "Paused", "Deleted"],
       required: true,

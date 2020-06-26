@@ -84,7 +84,7 @@ router.get(
 
 /**
  * Permission: GUIDEXP
- *
+ * Request Body Data: {name, description, free_trial(boolean), free_trial_end(date)}
  */
 router.post(
   "/customer",

@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const HttpStatus = require("./httpHelper");
 const RoleHelper = require("./roleHelper");
+const e = require("express");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {
@@ -17,7 +18,7 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
     let customer_id;
     //create a new customer id
     if (ROLE === RoleHelper.MANAGER) customer_id = mongoose.Types.ObjectId();
-    else customer_id = req.user.Customer_Id; //ROLE === RoleHelper.STAFF
+    else customer_id = req.user.Customer; //ROLE === RoleHelper.STAFF
 
     const query = { Email: data.email };
     const update = {
@@ -28,7 +29,7 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
         Password: hashpassword,
         Hash: token,
         Active: false,
-        Customer_Id: customer_id,
+        Customer: customer_id,
         Created_By: req.user._id,
       },
     };
@@ -51,14 +52,19 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
       customer._id = customer_id;
       customer.Name = data.name;
       customer.Description = data.description;
-      customer.Status = false;
+      customer.Active = false;
+      customer.Subscribed = false;
+      customer.Free_Trial = data.free_trial;
+      customer.Free_Trial_End = data.free_trial_end;
       await customer.save();
     }
     //Todo:
     //Send an email to client
 
     //return success response to client
-    res.status(HttpStatus.OK).send("User has been created");
+    if (ROLE === RoleHelper.MANAGER)
+      res.status(HttpStatus.OK).send("New customer has been created.");
+    else res.status(HttpStatus.OK).send("User has been created");
   }
 
   return register;

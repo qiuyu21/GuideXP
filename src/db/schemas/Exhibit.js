@@ -1,15 +1,15 @@
 module.exports = function (mongoose) {
   const Exhibit = new mongoose.Schema({
-    Customer_Id: {
+    Customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
     },
-    Exhibition_Id: {
+    Exhibition: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Exhibition",
     },
-    Exhibit_Status: {
+    Status: {
       type: String,
       enum: ["Created", "Ready", "Paused", "Deleted"],
       required: true,

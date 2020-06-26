@@ -4,7 +4,7 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
-    Translation_Status: {
+    Status: {
       type: String,
       enum: ["Created", "Ready", "Paused", "Deleted"],
     },
@@ -16,7 +16,6 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
-    Last_Modified: Date,
   });
   return Translation;
 };

@@ -1,5 +1,3 @@
-//https://lingohub.com/blog/2014/03/lingohub-support-language-codes-localization
-
 const ARABIC = { code: "ar", language: "Arabic" };
 const CHINESE_SIMPLIFIED = { code: "zh-cn", language: "Chinese Simplified" };
 const CHINESE_TRADITIONAL = { code: "zh-tw", language: "Chinese Traditional" };
@@ -21,6 +19,8 @@ const SPANISH = { code: "es", language: "Spanish" };
 const SWEDISH = { code: "sv", language: "Swedish" };
 const THAI = { code: "th", language: "Thai" };
 const VIETNAMESE = { code: "vi", language: "Vietnamese" };
+
+//https://lingohub.com/blog/2014/03/lingohub-support-language-codes-localizatio
 
 module.exports = Object.freeze({
   ARABIC,

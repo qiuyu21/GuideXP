@@ -40,4 +40,10 @@ router.get("/reset/:userId/:token", asyncMiddleware(getReset));
  */
 router.post("/reset/:userId/:token", asyncMiddleware(postReset));
 
+/**
+ * Permission: MANAGER STAFF
+ * Request Body Data: {}
+ */
+router.post("/activate", asyncMiddleware());
+
 module.exports = router;

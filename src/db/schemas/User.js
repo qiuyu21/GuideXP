@@ -57,7 +57,7 @@ module.exports = function (mongoose) {
     Password_Change: Date,
     Password_Forgot: Date,
     Last_Login_In: Date,
-    Customer_Id: {
+    Customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },

@@ -1,6 +1,6 @@
 module.exports = function (mongoose) {
   const UserAccess = new mongoose.Schema({
-    Customer_Id: {
+    Customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },
