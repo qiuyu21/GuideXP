@@ -15,7 +15,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    *
    * Return:
    * Array[Object{
-   *  _id(Customer),
+   *  Customer(Customer),
    *  Name(Customer),
    *  Active(Customer),
    *  Subscribed(Customer),
@@ -41,25 +41,42 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
       else return res.status(httpHelper.BAD_REQUEST).send();
     }
 
-    const customers = await Customer.find(null, "-Description", null)
-      .limit(20)
-      .skip(query.page * 20)
-      .lean();
+    const customers = await Customer.aggregate([
+      { $limit: 20 },
+      { $skip: query.page * 20 },
+      {
+        $project: {
+          _id: 0,
+          Customer: "$_id",
+          Name: 1,
+          Active: 1,
+          Description: 1,
+          Subscribed: 1,
+          Subscription_Start: 1,
+          Subscription_End: 1,
+          Free_Trial: 1,
+          Free_Trial_End: 1,
+        },
+      },
+    ]);
 
     let promisegroup = [];
 
     for (const customer of customers) {
       promisegroup.push(
         User.findOne(
-          { Customer: customer._id, Role: ROLE.MANAGER },
-          "_id Email",
+          { Customer: customer.Customer, Role: ROLE.MANAGER },
+          "_id Email Customer",
           { lean: true }
         )
       );
     }
 
     Promise.all(promisegroup).then((values) => {
-      return res.send(customers);
+      const results = customers.map((value, index) =>
+        Object.assign({}, value, values[index])
+      );
+      return res.send(results);
     });
   }
 

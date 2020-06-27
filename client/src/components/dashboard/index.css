@@ -25,13 +25,13 @@
 
 .table-content-container {
   box-sizing: border-box;
-  max-width: 992px !important;
+  max-width: 992px;
   margin: 0 auto;
   padding: 16px 16px;
 }
 
 /*
-md device breakpoint + sider width (200)
+md device breakpoint (768) + sider width (200)
 */
 @media only screen and (max-width: 968px) {
   .dashboard-content-container {

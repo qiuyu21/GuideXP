@@ -11,11 +11,14 @@ export default function RouteProtected({
 }) {
   return (
     <Route
-      {...rest}
       render={(props) => {
         const user = authService.getUser();
         if (!user) return <Redirect to="/login" />;
-        return Component ? <Component {...props} user={user} /> : render(props);
+        return Component ? (
+          <Component {...props} user={user} {...rest} />
+        ) : (
+          render(props)
+        );
       }}
     />
   );

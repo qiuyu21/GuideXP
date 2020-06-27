@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Layout, Typography, Spin } from "antd";
+import { Layout, Typography } from "antd";
 import "./index.css";
 import Guidexp from "./nav/guidexp";
 // import Manager from "./sider/manager";
@@ -17,17 +17,10 @@ const { Title } = Typography;
 
 export default function Index(props) {
   const { user } = props;
-  user.Role = RoleHelper.GUIDEXP;
-
-  const [spinning, setSpinning] = useState(false);
 
   const handleLogout = () => {
     authService.logout();
     window.location = "/login";
-  };
-
-  const handleSpin = (spinStart) => {
-    setSpinning(spinStart);
   };
 
   return (
@@ -55,25 +48,23 @@ export default function Index(props) {
             {user.Role === RoleHelper.STAFF && <Staff />} */}
           </Sider>
           <Content>
-            <Spin spinning={spinning}>
-              <Switch>
-                {user.Role === RoleHelper.GUIDEXP && (
-                  <RouteProtected
-                    exact
-                    path="/customer/new"
-                    component={NewCustomer}
-                  />
-                )}
-                {user.Role === RoleHelper.GUIDEXP && (
-                  <RouteProtected
-                    path="/customer/list"
-                    component={CustomerList}
-                  />
-                )}
-                <RouteProtected path="/dashboard" component={Dashboard} />
-                <Redirect from="/" to="/dashboard" component={Dashboard} />
-              </Switch>
-            </Spin>
+            <Switch>
+              {user.Role === RoleHelper.GUIDEXP && (
+                <RouteProtected
+                  exact
+                  path="/customer/new"
+                  component={NewCustomer}
+                />
+              )}
+              {user.Role === RoleHelper.GUIDEXP && (
+                <RouteProtected
+                  path="/customer/list"
+                  component={CustomerList}
+                />
+              )}
+              <RouteProtected path="/dashboard" component={Dashboard} />
+              <Redirect from="/" to="/dashboard" component={Dashboard} />
+            </Switch>
           </Content>
         </Layout>
       </Layout>
