@@ -5,7 +5,7 @@ const { User, Customer, Exhibit, Exhibition, Access } = db.models;
 const { mongoose } = db;
 //
 const asyncMiddleware = require("../middleware/async");
-const tokenMiddleware = require("../middleware/token");
+const authenticationMiddleware = require("../middleware/token");
 const authorizationMiddleware = require("../middleware/auth");
 //
 const UserController = require("../controllers/userController");
@@ -18,14 +18,16 @@ const {
   getSingleStaff,
   postCreateSingleCustomer,
   postCreateSingleStaff,
-  postActivateUser,
-  postDeactivateUser,
-  postPermission,
+  postGiveWritePermission,
+  postChangeManager,
+  postDeleteStaff,
+  postCreateSingleGuidexp,
 } = UserController(mongoose, User, Customer, Exhibit, Exhibition, Access);
 
 //Every route here is not open to the public. thus the following middleware is used.
-router.use(tokenMiddleware);
-//With that being said, every route is accessible by only users from one or some roles, thus using authoizationMiddleware.
+router.use(authenticationMiddleware);
+
+//With that being said, every route is accessible by users of some roles, thus using authoizationMiddleware.
 //checkout ../middleware/auth.js to find the format of permission parameter for authorizationMiddleware(permission) method.
 
 /**
@@ -33,7 +35,7 @@ router.use(tokenMiddleware);
  */
 router.get(
   "/customer",
-  authorizationMiddleware(0b011),
+  authorizationMiddleware(0b001),
   asyncMiddleware(getAllCustomer)
 );
 
@@ -42,7 +44,7 @@ router.get(
  */
 router.get(
   "/manager",
-  authorizationMiddleware(0b010),
+  authorizationMiddleware(0b001),
   asyncMiddleware(getAllManager)
 );
 
@@ -60,7 +62,7 @@ router.get(
  */
 router.get(
   "/customer/:userId",
-  authorizationMiddleware(0b011),
+  authorizationMiddleware(0b001),
   asyncMiddleware(getSingleCustomer)
 );
 
@@ -68,7 +70,7 @@ router.get(
  * Permission: GUIDEXP
  */
 router.get(
-  "/manager/:customerId/:userId", //Customer Id & User Id are the indexes in User table
+  "/manager/:customerId/:userId",
   authorizationMiddleware(0b001),
   asyncMiddleware(getSingleManager)
 );
@@ -84,7 +86,7 @@ router.get(
 
 /**
  * Permission: GUIDEXP
- * Request Body Data: {name, description, free_trial(boolean), free_trial_end(date)}
+ * Request Body Data: {name, description, free_trial(true/false), free_trial_end(mm.dd.yyyy), first_name(manager), last_name, email}
  */
 router.post(
   "/customer",
@@ -94,6 +96,7 @@ router.post(
 
 /**
  * Permission: MANAGER
+ * Request Body Data: {first_name, last_name, email}
  */
 router.post(
   "/staff",
@@ -102,30 +105,47 @@ router.post(
 );
 
 /**
- * Permission: MANAGER USER
+ * Permission MANAGER
+ *
+ * Function: Assign Translation to a STAFF user
+ *
+ * Request Body Data: {}
  */
-router.put(
-  "/activate/:userId",
-  authorizationMiddleware(0b110),
-  asyncMiddleware(postActivateUser)
+router.post(
+  "/permission/:userId",
+  authorizationMiddleware(0b010),
+  asyncMiddleware(postGiveWritePermission)
 );
 
 /**
- * Permission GUIDEXP MANAGER
+ * Permission GUIDEXP
+ *
+ * Function: Change MANAGER email, first name, last name
  */
-router.put(
-  "/deactivate/:userId",
-  authorizationMiddleware(0b011),
-  asyncMiddleware(postDeactivateUser)
+router.post(
+  "/change/manager/:userId",
+  authorizationMiddleware(0b001),
+  asyncMiddleware(postChangeManager)
 );
 
 /**
  * Permission MANAGER
+ *
+ * Delete a STAFF user
  */
 router.post(
-  "/permission",
+  "/delete/staff/:userId",
   authorizationMiddleware(0b010),
-  asyncMiddleware(postPermission)
+  asyncMiddleware(postDeleteStaff)
 );
+
+/**
+ * Function: Create user GUIDEXP
+ *
+ * This endpoint is not exposed to any type of normal users (GUIDEXP, MANAGER, STAFF)
+ *
+ * Request Body Data: {first_name, last_name, email, password}
+ */
+router.post("/guidexp", asyncMiddleware(postCreateSingleGuidexp));
 
 module.exports = router;

@@ -4,9 +4,14 @@ import Joi from "@hapi/joi";
 import "./login.css";
 import Logo from "../../static/logo.png";
 import FormValidateHelper from "../formValidate";
+import authService from "../../services/authServices";
+import HTTP from "../../helper/httpHelper";
 
 const definition = {
-  email: Joi.string().required().label("Username"),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .label("Username"),
   password: Joi.string().required().label("Password"),
 };
 
@@ -16,8 +21,26 @@ export default function Login() {
     errors: {},
   });
   const { validateAll, handleChange } = FormValidateHelper(Joi, definition);
-  const handleSubmit = () => {};
-  const doSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const errors = validateAll(state.data);
+    setState({ ...state, errors: errors || {} });
+    if (errors) return;
+    doSubmit();
+  };
+
+  const doSubmit = async () => {
+    try {
+      await authService.login(state.data);
+      window.location = "/";
+    } catch (ex) {
+      if (ex.response && ex.response.status === HTTP.BAD_REQUEST) {
+        const errors = { ...state.errors };
+        errors.email = ex.response.data;
+        setState({ ...state, errors });
+      }
+    }
+  };
   return (
     <div className="app">
       <div className="form-wrapper login-container">
@@ -36,7 +59,6 @@ export default function Login() {
                 onChange={(e) => {
                   const new_state = handleChange(state, e);
                   setState(new_state);
-                  console.log(process.env);
                 }}
                 value={state.data.email}
               />
@@ -64,7 +86,7 @@ export default function Login() {
         </div>
         <div className="footer">
           <div className="button-container">
-            <button type="submit" className="btn">
+            <button type="submit" className="btn" onClick={handleSubmit}>
               Login
             </button>
           </div>

@@ -9,7 +9,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * - Support Query String & Pagination
    *
    * Query:
-   * sort=[name, email, exhibition, exhibit, date]-[asc, desc]
+   * sort=[name, email]-[asc, desc]
    * active=ture/false
    * page=number
    *
@@ -17,11 +17,11 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * Array[Object{
    *  _id(Customer),
    *  Name(Customer),
-   *  Status(Customer)
+   *  Active(Customer),
+   *  Subscribed(Customer),
+   *  Free_Trial_End(Customer),
    *  _id(User where Role === MANAGER),
    *  Email(User where Role === MANAGER),
-   *  #Exhibition,
-   *  #Exhibits,
    * }]
    *
    */
@@ -36,25 +36,20 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     if (queryString.sort) {
       const [key, value] = queryString.sort.split("-");
 
-      if (
-        ["name", "email", "exhibition", "exhibit", "date"].includes(key) &&
-        ["asc", "desc"].includes(value)
-      )
+      if (["name", "email"].includes(key) && ["asc", "desc"].includes(value))
         query.sort = { key: value === "asc" ? 1 : -1 };
       else return res.status(httpHelper.BAD_REQUEST).send();
     }
 
-    const customers = await Customer.find()
+    const customers = await Customer.find(null, "-Description", null)
       .limit(20)
       .skip(query.page * 20)
       .lean();
 
-    let promisegroup1 = [],
-      promisesgroup2 = [],
-      promisesgroup3 = [];
+    let promisegroup = [];
 
     for (const customer of customers) {
-      promisegroup1.push(
+      promisegroup.push(
         User.findOne(
           { Customer: customer._id, Role: ROLE.MANAGER },
           "_id Email",
@@ -63,31 +58,9 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
       );
     }
 
-    for (const customer of customers) {
-      promisesgroup2.push(
-        Exhibition.find({ Customer: customer._id }).count(function (
-          err,
-          numOfDocs
-        ) {})
-      );
-    }
-
-    for (const customer of customers) {
-      promisesgroup3.push(
-        Exhibit.find({ Customer: customer._id }).count(function (
-          err,
-          numOfDocs
-        ) {})
-      );
-    }
-
-    const p1 = Promise.all(promisegroup1).then((values) => {});
-
-    const p2 = Promise.all(promisesgroup2).then((values) => {});
-
-    const p3 = Promise.all(promisesgroup3).then((values) => {});
-
-    Promise.all([p1, p2, p3]).then((values) => {});
+    Promise.all(promisegroup).then((values) => {
+      return res.send(customers);
+    });
   }
 
   /**
@@ -166,7 +139,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
       Customer: customer_id,
       Role: ROLE.MANAGER,
     })
-      .populate("Customer_Id")
+      .populate("Customer")
       .lean();
 
     const p2 = Exhibition.countDocuments({ Customer: customer_id });
@@ -249,7 +222,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * Send activation link to the email with the randomly generated password
    */
   async function postCreateSingleCustomer(req, res) {
-    const register = RegisterUserHelper(req, res, mongoose, User, Customer);
+    const { register } = RegisterUserHelper(req, res, mongoose, User, Customer);
     await register(ROLE.MANAGER);
   }
 
@@ -263,19 +236,26 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * Send activation link to the email with the randomly generated password
    */
   async function postCreateSingleStaff(req, res) {
-    const register = RegisterUserHelper(req, res, mongoose, User, Customer);
+    const { register } = RegisterUserHelper(req, res, mongoose, User, Customer);
     await register(ROLE.STAFF);
   }
 
-  /**
-   * User: MANAGER STAFF
-   *
-   */
-  async function postActivateUser(req, res) {}
+  async function postGiveWritePermission(req, res) {}
 
-  async function postDeactivateUser(req, res) {}
+  async function postChangeManager(req, res) {}
 
-  async function postPermission(req, res) {}
+  async function postDeleteStaff(req, res) {}
+
+  async function postCreateSingleGuidexp(req, res) {
+    const { guidexpRegister } = RegisterUserHelper(
+      req,
+      res,
+      mongoose,
+      User,
+      Customer
+    );
+    await guidexpRegister();
+  }
 
   return {
     getAllCustomer,
@@ -286,9 +266,10 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     getSingleStaff,
     postCreateSingleCustomer,
     postCreateSingleStaff,
-    postActivateUser,
-    postDeactivateUser,
-    postPermission,
+    postGiveWritePermission,
+    postChangeManager,
+    postDeleteStaff,
+    postCreateSingleGuidexp,
   };
 }
 

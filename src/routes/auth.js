@@ -6,10 +6,13 @@ const { User, Customer } = db.models;
 const asyncMiddleware = require("../middleware/async");
 //
 const AuthController = require("../controllers/authController");
-const { postLogin, postForget, getReset, postReset } = AuthController(
-  User,
-  Customer
-);
+const {
+  postLogin,
+  postForget,
+  getReset,
+  postReset,
+  postActivate,
+} = AuthController(User, Customer);
 
 //middleware
 const validate = require("../middleware/validate");
@@ -32,18 +35,18 @@ router.post("/forget", asyncMiddleware(postForget));
  * Permission: GUIDEXP MANAGER STAFF
  *
  */
-router.get("/reset/:userId/:token", asyncMiddleware(getReset));
+router.get("/reset/:userId", asyncMiddleware(getReset));
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
- * Request Body Data: {password}
+ * Request Body Data: {token, password}
  */
-router.post("/reset/:userId/:token", asyncMiddleware(postReset));
+router.post("/reset/:userId", asyncMiddleware(postReset));
 
 /**
  * Permission: MANAGER STAFF
- * Request Body Data: {}
+ * Request Body Data: {token}
  */
-router.post("/activate", asyncMiddleware());
+router.post("/activate/:userId", asyncMiddleware(postActivate));
 
 module.exports = router;

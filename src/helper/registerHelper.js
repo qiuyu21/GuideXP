@@ -2,18 +2,17 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const HttpStatus = require("./httpHelper");
 const RoleHelper = require("./roleHelper");
-const e = require("express");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {
     const { body: data } = req;
     //synchronous operations
     //Create a random password and a hash for activation
-    const password = crypto.randomBytes(4).toString("hex"); //String of length 8
+    // const password = crypto.randomBytes(4).toString("hex"); //String of length 8
     const token = crypto.randomBytes(16).toString("hex"); //String of length 32
     //Hash the password
     const salt = await bcrypt.genSalt(10);
-    const hashpassword = await bcrypt.hash(password, salt);
+    const hashpassword = await bcrypt.hash("password", salt);
     //
     let customer_id;
     //create a new customer id
@@ -54,8 +53,8 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
       customer.Description = data.description;
       customer.Active = false;
       customer.Subscribed = false;
-      customer.Free_Trial = data.free_trial;
-      customer.Free_Trial_End = data.free_trial_end;
+      customer.Free_Trial = data.free_trial === "true";
+      customer.Free_Trial_End = new Date(data.free_trial_end);
       await customer.save();
     }
     //Todo:
@@ -63,11 +62,39 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
 
     //return success response to client
     if (ROLE === RoleHelper.MANAGER)
-      res.status(HttpStatus.OK).send("New customer has been created.");
+      res.status(HttpStatus.OK).send("New customer has been created");
     else res.status(HttpStatus.OK).send("User has been created");
   }
 
-  return register;
+  async function guidexpRegister() {
+    const { body: data } = req;
+    const salt = await bcrypt.genSalt(10);
+    const hashpassword = await bcrypt.hash(data.password, salt);
+    const query = { Email: data.email };
+    const update = {
+      $setOnInsert: {
+        Role: RoleHelper.GUIDEXP,
+        First_Name: data.first_name,
+        Last_Name: data.last_name,
+        Password: hashpassword,
+        Active: true,
+      },
+    };
+    const doc = await User.findOneAndUpdate(query, update, {
+      new: true,
+      upsert: true,
+      rawResult: true,
+      runValidators: true,
+    });
+    if (doc.lastErrorObject.updatedExisting)
+      return res.status(HttpStatus.BAD_REQUEST).send("User already exists");
+    res.status(HttpStatus.OK).send("GUIDEXP has been created");
+  }
+
+  return {
+    register,
+    guidexpRegister,
+  };
 }
 
 module.exports = RegisterUserHelper;

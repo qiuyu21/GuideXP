@@ -1,17 +1,37 @@
 import React from "react";
-import { Form, Input, Button, Descriptions } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Descriptions,
+  DatePicker,
+  Breadcrumb,
+} from "antd";
+
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 },
+};
+
+const tailLayout = {
+  wrapperCol: { offset: 6, span: 18 },
+};
 
 export default function NewCustomer() {
   const [form] = Form.useForm();
   const { TextArea } = Input;
 
   return (
-    <React.Fragment>
+    <div className="dashboard-content-container">
+      <Breadcrumb style={{ marginBottom: "16px" }}>
+        <Breadcrumb.Item>Customer</Breadcrumb.Item>
+        <Breadcrumb.Item>New</Breadcrumb.Item>
+      </Breadcrumb>
       <Descriptions title="Add A New Customer" bordered />
-      <Form form={form} layout="vertical">
+      <Form form={form} {...layout}>
         <Form.Item
           label="Customer Name"
-          name="customer_name"
+          name="name"
           rules={[
             {
               required: true,
@@ -19,12 +39,13 @@ export default function NewCustomer() {
               whitespace: true,
             },
           ]}
+          className="custom-flex"
         >
           <Input autoComplete="off" />
         </Form.Item>
         <Form.Item
           label="Customer Description"
-          name="customer_description"
+          name="description"
           rules={[
             {
               required: true,
@@ -32,6 +53,7 @@ export default function NewCustomer() {
               whitespace: true,
             },
           ]}
+          className="custom-flex"
         >
           <TextArea rows={4} allowClear />
         </Form.Item>
@@ -48,6 +70,7 @@ export default function NewCustomer() {
               message: "Please input your E-mail!",
             },
           ]}
+          className="custom-flex"
         >
           <Input autoComplete="off" />
         </Form.Item>
@@ -61,6 +84,7 @@ export default function NewCustomer() {
               whitespace: true,
             },
           ]}
+          className="custom-flex"
         >
           <Input autoComplete="off" />
         </Form.Item>
@@ -74,13 +98,23 @@ export default function NewCustomer() {
               whitespace: true,
             },
           ]}
+          className="custom-flex"
         >
           <Input autoComplete="off" />
         </Form.Item>
-        <Button type="primary" htmlType="submit">
-          Add
-        </Button>
+        <Form.Item
+          name="free-trial"
+          label="Free Trial Until"
+          className="custom-flex"
+        >
+          <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+        </Form.Item>
+        <Form.Item {...tailLayout} className="custom-flex">
+          <Button type="primary" htmlType="submit">
+            Add
+          </Button>
+        </Form.Item>
       </Form>
-    </React.Fragment>
+    </div>
   );
 }

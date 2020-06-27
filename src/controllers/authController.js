@@ -23,7 +23,7 @@ function AuthController(User, Customer) {
         .send("Invalid username or password");
 
     const token = await jwthelper.sign(user._doc);
-    res.status(HttpStatus.OK).send(token);
+    res.status(HttpStatus.OK).send({ token: token });
   }
 
   /**
@@ -46,11 +46,14 @@ function AuthController(User, Customer) {
 
   function postReset(req, res) {}
 
+  function postActivate(req, res) {}
+
   return {
     postLogin,
     postForget,
     getReset,
     postReset,
+    postActivate,
   };
 }
 

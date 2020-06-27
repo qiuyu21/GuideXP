@@ -1,21 +1,35 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Layout, Typography } from "antd";
+import { Layout, Typography, Spin } from "antd";
 import "./index.css";
-import Guidexp from "./sider/guidexp";
-import Manager from "./sider/manager";
-import Staff from "./sider/staff";
+import Guidexp from "./nav/guidexp";
+// import Manager from "./sider/manager";
+// import Staff from "./sider/staff";
 import RoleHelper from "../../services/roleServices";
 import RouteProtected from "../protectedRoute";
 // import RichEditorExample from "./editor";
 import NewCustomer from "./customer/newcustomer";
+import CustomerList from "./customer/customerlist";
 import Dashboard from "./dashboard/dashboard";
 import { Switch, Redirect } from "react-router-dom";
+import authService from "../../services/authServices";
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
 
 export default function Index(props) {
   const { user } = props;
   user.Role = RoleHelper.GUIDEXP;
+
+  const [spinning, setSpinning] = useState(false);
+
+  const handleLogout = () => {
+    authService.logout();
+    window.location = "/login";
+  };
+
+  const handleSpin = (spinStart) => {
+    setSpinning(spinStart);
+  };
+
   return (
     <Fragment>
       <Layout style={{ minHeight: "100vh" }}>
@@ -34,12 +48,14 @@ export default function Index(props) {
             trigger={null}
           >
             {/* different roles display different menus */}
-            {user.Role === RoleHelper.GUIDEXP && <Guidexp />}
-            {user.Role === RoleHelper.MANAGER && <Manager />}
-            {user.Role === RoleHelper.STAFF && <Staff />}
+            {user.Role === RoleHelper.GUIDEXP && (
+              <Guidexp handleLogout={handleLogout} />
+            )}
+            {/* {user.Role === RoleHelper.MANAGER && <Manager />}
+            {user.Role === RoleHelper.STAFF && <Staff />} */}
           </Sider>
           <Content>
-            <div className="dashboard-content-container">
+            <Spin spinning={spinning}>
               <Switch>
                 {user.Role === RoleHelper.GUIDEXP && (
                   <RouteProtected
@@ -48,10 +64,16 @@ export default function Index(props) {
                     component={NewCustomer}
                   />
                 )}
+                {user.Role === RoleHelper.GUIDEXP && (
+                  <RouteProtected
+                    path="/customer/list"
+                    component={CustomerList}
+                  />
+                )}
                 <RouteProtected path="/dashboard" component={Dashboard} />
                 <Redirect from="/" to="/dashboard" component={Dashboard} />
               </Switch>
-            </div>
+            </Spin>
           </Content>
         </Layout>
       </Layout>

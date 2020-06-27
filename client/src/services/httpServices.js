@@ -4,6 +4,13 @@ import axios from "axios";
 axios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    if (process.env.REACT_APP_ENV === "development")
+      config.baseURL = process.env.REACT_APP_DEVELOPMENT_BACKEND_URL;
+    else config.baseURL = process.env.REACT_APP_PRODUCTION_BACKEND_URL;
+
+    config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+      process.env.REACT_APP_JWT_NAME
+    )}`;
     return config;
   },
   function (error) {

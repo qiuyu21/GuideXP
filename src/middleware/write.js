@@ -30,18 +30,14 @@ module.exports = function (req, res, next) {
     !Customer.Subscribed &&
     Customer.Free_Trial &&
     Customer.Free_Trial_End < Date.now()
-  ) {
-    user.Customer.Free_Trial = false;
-    user.save();
-    return res.status(HttpHelper.FORBIDDEN).send("Free trial has ended");
-  }
+  )
+    return res.status(HttpHelper.FORBIDDEN).send("Free trial has ended"); //Don't update Free_Trial to false.
 
   if (Customer.Subscribed && Customer.Subscription_End < Date.now())
     return res
       .status(HttpHelper.FORBIDDEN)
       .send("Please renew your subscription to continue");
 
-  //will be at here after line 29-37 was executed
   if (!Customer.Subscribed && !Customer.Free_Trial)
     return res
       .status(HttpHelper.FORBIDDEN)
