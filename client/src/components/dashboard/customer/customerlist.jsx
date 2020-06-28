@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Descriptions, Breadcrumb, Table, Space, Spin } from "antd";
+import React, { useEffect, useState } from "react";
+import { Descriptions, Breadcrumb, Table, Space } from "antd";
 import userService from "../../../services/userServices";
+import { Link } from "react-router-dom";
 
 const columns = [
   {
@@ -15,22 +16,33 @@ const columns = [
     key: "email",
     sorter: true,
     responsive: ["lg"],
+    render: (text) => {
+      return <Link to="#">{text}</Link>;
+    },
   },
   {
-    title: "Subscription End",
-    dataIndex: "subscribed",
+    title: "On Subscription",
+    dataIndex: "Subscribed",
     key: "subscribed",
     responsive: ["md"],
+    render: (text) => {
+      if (text) return "yes";
+      return "no";
+    },
+    align: "center",
   },
   {
-    title: "Free Trial End",
-    dataIndex: "Free_Trial_End",
+    title: "On Free Trial",
+    dataIndex: "Free_Trial",
     key: "free_trial",
     responsive: ["md"],
     render: (text) => {
-      const date = new Date(text);
-      return date.toDateString().substring(4);
+      // const date = new Date(text);
+      // return date.toDateString().substring(4);
+      if (text) return "yes";
+      return "no";
     },
+    align: "center",
   },
   {
     title: "Added Date",
@@ -46,29 +58,43 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    render: (text, record) => (
-      <Space size="middle">
-        <a>View</a>
-      </Space>
-    ),
+    align: "center",
+    render: (text, record) => <Link to="#">View</Link>,
   },
 ];
 
 export default function CustomerList() {
-  const [page, setPage] = useState(0);
-  const [tableLoading, setTableLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState({
+    page: 1,
+    col: "",
+    order: "",
+  });
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [totalDocs, setTotalDocs] = useState(0);
+
   useEffect(() => {
     async function getCustomers() {
-      const data = await userService.getCustomers();
-      const newData = data.map((value, index) => {
+      setLoading(true);
+      const { total, page, results } = await userService.getCustomers(query);
+      const newData = results.map((value, index) => {
         return { key: index, ...value };
       });
+      console.log(newData);
       setData(newData);
+      setTotalDocs(total);
+      setLoading(false);
     }
     getCustomers();
-  }, []);
+  }, [query]);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setQuery({
+      page: pagination.current,
+      col: sorter.columnKey,
+      order: sorter.order,
+    });
+  };
 
   return (
     <div className="table-content-container">
@@ -78,10 +104,17 @@ export default function CustomerList() {
       </Breadcrumb>
       <Descriptions title="Customer List" bordered />
       <Table
+        loading={loading}
         columns={columns}
-        size="small"
         showSorterTooltip={false}
         dataSource={data}
+        pagination={{
+          total: totalDocs,
+          pageSize: 20,
+          current: query.page,
+          showTotal: (total, range) => `Total ${total} items`,
+        }}
+        onChange={handleTableChange}
       />
     </div>
   );

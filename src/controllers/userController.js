@@ -9,53 +9,66 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * - Support Query String & Pagination
    *
    * Query:
-   * sort=[name, email]-[asc, desc]
-   * active=ture/false
+   * col=[name, email]
+   * order=[ascend, descend]
    * page=number
    *
    * Return:
-   * Array[Object{
-   *  Customer(Customer),
-   *  Name(Customer),
-   *  Active(Customer),
-   *  Subscribed(Customer),
-   *  Free_Trial_End(Customer),
-   *  _id(User where Role === MANAGER),
-   *  Email(User where Role === MANAGER),
-   * }]
+   * Object{
+   *   total,
+   *   page,
+   *   Array[Object{
+   *     Customer(Customer),
+   *     Name(Customer),
+   *     Active(Customer),
+   *     Subscribed(Customer),
+   *     Free_Trial(Customer),
+   *     Free_Trial_End(Customer),
+   *     _id(User where Role === MANAGER),
+   *     Email(User where Role === MANAGER),
+   *  }]
+   * }
    *
    */
   async function getAllCustomer(req, res) {
     // Query String validation
-    const { query: queryString } = req;
-
-    const query = {};
-    if (!queryString.page) query.page = 0;
-    else query.page = queryString.page;
-
-    if (queryString.sort) {
-      const [key, value] = queryString.sort.split("-");
-
-      if (["name", "email"].includes(key) && ["asc", "desc"].includes(value))
-        query.sort = { key: value === "asc" ? 1 : -1 };
+    const { query } = req;
+    if (!query.page) query.page = 1;
+    if (query.order) {
+      if (
+        ["ascend", "descend"].includes(query.order) &&
+        ["name", "email"].includes(query.col)
+      )
+        query.order = query.order === "ascend" ? 1 : -1;
       else return res.status(httpHelper.BAD_REQUEST).send();
     }
 
-    const customers = await Customer.aggregate([
-      { $limit: 20 },
-      { $skip: query.page * 20 },
+    const nameSort = [];
+    if (query.order) nameSort.push({ $sort: { Name: query.order } });
+
+    const [{ meta, customers }] = await Customer.aggregate([
       {
-        $project: {
-          _id: 0,
-          Customer: "$_id",
-          Name: 1,
-          Active: 1,
-          Description: 1,
-          Subscribed: 1,
-          Subscription_Start: 1,
-          Subscription_End: 1,
-          Free_Trial: 1,
-          Free_Trial_End: 1,
+        $facet: {
+          meta: [{ $count: "total" }, { $addFields: { page: query.page } }],
+          customers: [
+            ...nameSort,
+            { $limit: 20 },
+            { $skip: (query.page - 1) * 20 },
+            {
+              $project: {
+                _id: 0,
+                Customer: "$_id",
+                Name: 1,
+                Active: 1,
+                Description: 1,
+                Subscribed: 1,
+                Subscription_Start: 1,
+                Subscription_End: 1,
+                Free_Trial: 1,
+                Free_Trial_End: 1,
+              },
+            },
+          ],
         },
       },
     ]);
@@ -76,7 +89,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
       const results = customers.map((value, index) =>
         Object.assign({}, value, values[index])
       );
-      return res.send(results);
+      return res.status(httpHelper.OK).send({ ...meta[0], results });
     });
   }
 

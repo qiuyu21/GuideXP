@@ -7,7 +7,9 @@ import {
   DatePicker,
   Breadcrumb,
 } from "antd";
-
+import moment from "moment";
+import userService from "../../../services/userServices";
+import httpHelper from "../../../helper/httpHelper";
 const layout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
@@ -21,6 +23,19 @@ export default function NewCustomer() {
   const [form] = Form.useForm();
   const { TextArea } = Input;
 
+  const disableDate = (currentDate) => {
+    return currentDate && currentDate < moment().endOf("day");
+  };
+
+  const doSubmit = (values) => {
+    try {
+      const response = userService.postNewCustomer(values);
+    } catch (ex) {
+      if (ex.response && ex.response.status === httpHelper.BAD_REQUEST) {
+      }
+    }
+  };
+
   return (
     <div className="dashboard-content-container">
       <Breadcrumb style={{ marginBottom: "16px" }}>
@@ -28,7 +43,13 @@ export default function NewCustomer() {
         <Breadcrumb.Item>New</Breadcrumb.Item>
       </Breadcrumb>
       <Descriptions title="Add A New Customer" bordered />
-      <Form form={form} {...layout}>
+      <Form
+        form={form}
+        {...layout}
+        onFinish={(values) => {
+          console.log(values);
+        }}
+      >
         <Form.Item
           label="Customer Name"
           name="name"
@@ -107,7 +128,7 @@ export default function NewCustomer() {
           label="Free Trial Until"
           className="custom-flex"
         >
-          <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+          <DatePicker disabledDate={disableDate} />
         </Form.Item>
         <Form.Item {...tailLayout} className="custom-flex">
           <Button type="primary" htmlType="submit">

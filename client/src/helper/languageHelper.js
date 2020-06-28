@@ -20,7 +20,7 @@ const SWEDISH = { code: "sv", language: "Swedish" };
 const THAI = { code: "th", language: "Thai" };
 const VIETNAMESE = { code: "vi", language: "Vietnamese" };
 
-module.exports = Object.freeze({
+export default Object.freeze({
   ARABIC,
   CHINESE_SIMPLIFIED,
   CHINESE_TRADITIONAL,
@@ -43,5 +43,3 @@ module.exports = Object.freeze({
   THAI,
   VIETNAMESE,
 });
-
-//https://lingohub.com/blog/2014/03/lingohub-support-language-codes-localizatio
