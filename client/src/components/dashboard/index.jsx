@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Layout, Typography } from "antd";
 import "./index.css";
 import Guidexp from "./nav/guidexp";
@@ -10,17 +10,18 @@ import RouteProtected from "../protectedRoute";
 import NewCustomer from "./customer/newcustomer";
 import CustomerList from "./customer/customerlist";
 import Dashboard from "./dashboard/dashboard";
-import { Switch, Redirect } from "react-router-dom";
+import { Switch, Redirect, useHistory } from "react-router-dom";
 import authService from "../../services/authServices";
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
 
 export default function Index(props) {
   const { user } = props;
+  let history = useHistory();
 
   const handleLogout = () => {
     authService.logout();
-    window.location = "/login";
+    history.push("/login");
   };
 
   return (

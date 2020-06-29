@@ -243,7 +243,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
 
   /**
    * GUIDEXP create a new customer
-   * req.body: {name, description, email, first_name, last_name}
+   * req.body: {name, description, email, first_name, last_name, day}
    *
    * Tables:
    *  - Customer => insert customer name and customer description and create a new customer_id

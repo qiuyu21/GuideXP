@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Descriptions, Breadcrumb, Table, Space } from "antd";
+import { Descriptions, Breadcrumb, Table, Tooltip, Typography } from "antd";
 import userService from "../../../services/userServices";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 const columns = [
   {
@@ -21,28 +22,65 @@ const columns = [
     },
   },
   {
+    align: "center",
     title: "On Subscription",
     dataIndex: "Subscribed",
     key: "subscribed",
     responsive: ["md"],
-    render: (text) => {
-      if (text) return "yes";
-      return "no";
+    render: (text, record) => {
+      if (text) {
+        const subscription_end = moment(record.Subscription_End);
+        const now = moment().utc();
+        const timezoneoffset = moment().utcOffset();
+        if (now > subscription_end) {
+          return (
+            <Tooltip
+              title={subscription_end.utcOffset(timezoneoffset).format()}
+            >
+              Expired
+            </Tooltip>
+          );
+        } else {
+          return (
+            <Tooltip
+              title={subscription_end.utcOffset(timezoneoffset).format()}
+            >
+              Yes
+            </Tooltip>
+          );
+        }
+      } else return "No";
     },
-    align: "center",
   },
   {
+    align: "center",
     title: "On Free Trial",
     dataIndex: "Free_Trial",
     key: "free_trial",
     responsive: ["md"],
-    render: (text) => {
-      // const date = new Date(text);
-      // return date.toDateString().substring(4);
-      if (text) return "yes";
-      return "no";
+    render: (text, record) => {
+      if (text) {
+        //customer has free trial recorded
+        const free_end = moment(record.Free_Trial_End);
+        const now = moment().utc();
+        const timezoneoffset = moment().utcOffset();
+        if (now > free_end) {
+          return (
+            <Tooltip title={free_end.utcOffset(timezoneoffset).format()}>
+              Expired
+            </Tooltip>
+          );
+        } else {
+          return (
+            <Tooltip title={free_end.utcOffset(timezoneoffset).format()}>
+              Yes
+            </Tooltip>
+          );
+        }
+      } else {
+        return "No";
+      }
     },
-    align: "center",
   },
   {
     title: "Added Date",
@@ -56,9 +94,9 @@ const columns = [
     },
   },
   {
+    align: "center",
     title: "Action",
     key: "action",
-    align: "center",
     render: (text, record) => <Link to="#">View</Link>,
   },
 ];

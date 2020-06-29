@@ -13,7 +13,7 @@ export async function getCustomers({ page, col, order }) {
 }
 
 /**
- * data: Object({name, description, email, first_name, last_name, date})
+ * data: Object({name, description, email, first_name, last_name, days})
  */
 export async function postNewCustomer(data) {
   const { data: response } = await http.post(endpoint + "/customer", data);

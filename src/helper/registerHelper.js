@@ -2,17 +2,23 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const HttpStatus = require("./httpHelper");
 const RoleHelper = require("./roleHelper");
+const moment = require("moment");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {
     const { body: data } = req;
     //synchronous operations
-    //Create a random password and a hash for activation
-    // const password = crypto.randomBytes(4).toString("hex"); //String of length 8
+    //Create a random password and a hash for activation in production environment
+    let password;
+    if (process.env.NODE_ENV === "development") {
+      password = "password";
+    } else {
+      password = crypto.randomBytes(4).toString("hex"); //String of length 8
+    }
     const token = crypto.randomBytes(16).toString("hex"); //String of length 32
     //Hash the password
     const salt = await bcrypt.genSalt(10);
-    const hashpassword = await bcrypt.hash("password", salt);
+    const hashpassword = await bcrypt.hash(password, salt);
     //
     let customer_id;
     //create a new customer id
@@ -53,8 +59,12 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
       customer.Description = data.description;
       customer.Active = false;
       customer.Subscribed = false;
-      customer.Free_Trial = data.free_trial === "true";
-      customer.Free_Trial_End = new Date(data.free_trial_end);
+      customer.Free_Trial = data.days !== 0;
+      if (data.days !== 0)
+        customer.Free_Trial_End = moment()
+          .utc()
+          .add(data.days, "days")
+          .format();
       await customer.save();
     }
     //Todo:
