@@ -1,7 +1,7 @@
 const ROLE = require("../helper/roleHelper");
 const RegisterUserHelper = require("../helper/registerHelper");
 const httpHelper = require("../helper/httpHelper");
-
+const { status_codes, error_codes } = require("../helper/responseHelper");
 
 function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
   /**
@@ -148,28 +148,44 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * User: GUIDEXP
    * Return:
    * Obeject({
-   *  _id(Customer),
-   *  Name(Customer),
-   *  Description(Customer),
-   *  Customer_Status(Customer),
-   *  Subscription_Start(Customer),
-   *  Subscription_End(Customer),
-   *  _id(User),
-   *  Email(User),
-   *  #Exhibits,
-   *  #Exhibitions
+   *    Exhibition,
+   *    Exhibit,
+   *    Manager::Object{
+   *       _id,
+   *       Emial,
+   *       First_Name,
+   *       Last_Name
+   *    },
+   *    Customer::Object{
+   *       _id,
+   *       Name, 
+   *       Description,
+   *       Active,
+   *       Subscribed,
+   *       Free_Trial,
+   *       Free_Trial_End,
+   *    }
    * })
    *
-   * 1: FindOne from User table using customer_id and Role = 2
-   * 2: Populate the customer from customer_id
    */
   async function getSingleCustomer(req, res) {
+
     const customer = req.params.userId;
+
+    //Check the id
+    const isValid = mongoose.Types.ObjectId.isValid(customer);
+    if (!isValid) {
+      const msg = {};
+      msg.code = error_codes.ERROR_ID_STRING;
+      msg.message = `${customer} is not a valid id`;
+      return res.status(status_codes.BAD_REQUEST).send(msg);
+    }
 
     const p1 = User.findOne({
       Customer: customer,
       Role: ROLE.MANAGER,
     })
+      .select("_id First_Name Last_Name Email")
       .populate("Customer")
       .lean();
 
@@ -177,8 +193,20 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
 
     const p3 = Exhibit.countDocuments({ Customer: customer });
 
-    Promise.all([p1, p2, p3]).then((values) =>
-      res.status(httpHelper.OK).send(values)
+    Promise.all([p1, p2, p3]).then((values) => {
+      const msg = {};
+      if (!values[0]) {
+        msg.code = error_codes.ERROR_USER_NOT_FOUND;
+        msg.message = `No User with id ${customer} found in the database`;
+        return res.status(status_codes.NOT_FOUND).send(msg);
+      }
+      msg.Exhibition = values[1];
+      msg.Exhibit = values[2];
+      msg.Manager = values[0];
+      msg.Customer = values[0].Customer;
+      delete msg.Manager.Customer;
+      return res.status(status_codes.OK).send(msg);
+    }
     );
   }
 

@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Layout, Typography } from "antd";
+import React, { Fragment, useState } from "react";
+import { Layout, Typography, Spin } from "antd";
 import "./index.css";
 import Guidexp from "./nav/guidexp";
 // import Manager from "./sider/manager";
@@ -18,6 +18,7 @@ const { Title } = Typography;
 
 export default function Index(props) {
   const { user } = props;
+  const [loading, setLoading] = useState(false);
   let history = useHistory();
 
   const handleLogout = () => {
@@ -50,27 +51,29 @@ export default function Index(props) {
             {user.Role === RoleHelper.STAFF && <Staff />} */}
           </Sider>
           <Content>
+            {loading && <div className="spinner"><Spin /></div>}
             <Switch>
               {user.Role === RoleHelper.GUIDEXP && (
                 <RouteProtected
-                  exact
                   path="/customer/new"
                   component={NewCustomer}
+                  setLoading={setLoading}
                 />
               )}
               {user.Role === RoleHelper.GUIDEXP && (
                 <RouteProtected
                   path="/customer/list"
                   component={CustomerList}
+                  setLoading={setLoading}
                 />
               )}
               {user.Role === RoleHelper.GUIDEXP && (
                 <RouteProtected
                   path="/customer/details/:id"
                   component={CustomerDetail}
+                  setLoading={setLoading}
                 />
               )}
-
               <RouteProtected path="/dashboard" component={Dashboard} />
               <Redirect from="/" to="/dashboard" component={Dashboard} />
             </Switch>

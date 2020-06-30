@@ -12,6 +12,11 @@ export async function getCustomers({ page, col, order }) {
   return data;
 }
 
+export async function getSingleCustomer(customer) {
+  const { data } = await http.get(endpoint + `/customer/${customer}`);
+  return data;
+}
+
 /**
  * data: Object({name, description, email, first_name, last_name, days})
  */
@@ -22,5 +27,6 @@ export async function postNewCustomer(data) {
 
 export default {
   getCustomers,
+  getSingleCustomer,
   postNewCustomer,
 };

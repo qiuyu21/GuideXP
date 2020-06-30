@@ -13,11 +13,6 @@ module.exports = function (mongoose) {
       required: true,
       default: false,
     },
-    Suspended: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
     Subscribed: {
       type: Boolean,
       required: true,

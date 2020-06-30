@@ -97,7 +97,7 @@ const columns = [
     align: "center",
     title: "Action",
     key: "action",
-    render: (text, record) => <Link to="#">View</Link>,
+    render: (text, record) => <Link to={`/customer/details/${record.Customer}`}>View</Link>
   },
 ];
 
