@@ -6,6 +6,9 @@ const first_name = Joi.string().alphanum().max(32).required();
 const last_name = Joi.string().alphanum().max(32).required();
 const password = Joi.string().min(3).max(30);
 const email = Joi.string().email();
+const days = Joi.number().integer().min(0);
+const name = Joi.string().required();
+const description = Joi.string().required();
 
 function createDef(requestdata) {
   const def = {};
@@ -22,13 +25,23 @@ function createDef(requestdata) {
         break;
       case "email":
         def.email = email;
+        break;
+      case "days":
+        def.days = days;
+        break;
+      case "name":
+        def.name = name;
+        break;
+      case "description":
+        def.description = description;
+        break;
     }
   }
   return def;
 }
 
 module.exports = function (requestdata) {
-  const schema = Joi.object(createDef(requestdata));
+  const schema = Joi.object(createDef(requestdata)).unknown(true);
   return schema.validateAsync(requestdata, {
     abortEarly: false,
   });

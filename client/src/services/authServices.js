@@ -17,7 +17,7 @@ export function getUser() {
  */
 export async function login(data) {
   const { data: response } = await http.post(endpoint + "/login", data);
-  localStorage.setItem(process.env.REACT_APP_JWT_NAME, response.token);
+  localStorage.setItem(process.env.REACT_APP_JWT_NAME, response.message.token);
 }
 
 export function logout() {

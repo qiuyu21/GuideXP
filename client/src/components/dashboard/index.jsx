@@ -9,6 +9,7 @@ import RouteProtected from "../protectedRoute";
 // import RichEditorExample from "./editor";
 import NewCustomer from "./customer/newcustomer";
 import CustomerList from "./customer/customerlist";
+import CustomerDetail from "./customer/customerdetail";
 import Dashboard from "./dashboard/dashboard";
 import { Switch, Redirect, useHistory } from "react-router-dom";
 import authService from "../../services/authServices";
@@ -63,6 +64,13 @@ export default function Index(props) {
                   component={CustomerList}
                 />
               )}
+              {user.Role === RoleHelper.GUIDEXP && (
+                <RouteProtected
+                  path="/customer/details/:id"
+                  component={CustomerDetail}
+                />
+              )}
+
               <RouteProtected path="/dashboard" component={Dashboard} />
               <Redirect from="/" to="/dashboard" component={Dashboard} />
             </Switch>

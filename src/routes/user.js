@@ -7,6 +7,7 @@ const { mongoose } = db;
 const asyncMiddleware = require("../middleware/async");
 const authenticationMiddleware = require("../middleware/token");
 const authorizationMiddleware = require("../middleware/auth");
+const validateMiddleware = require("../middleware/validate");
 //
 const UserController = require("../controllers/userController");
 const {
@@ -90,7 +91,10 @@ router.get(
  */
 router.post(
   "/customer",
-  authorizationMiddleware(0b001),
+  [
+    authorizationMiddleware(0b001),
+    validateMiddleware(["name", "description", "first_name", "last_name", "email", "days"]),
+  ],
   asyncMiddleware(postCreateSingleCustomer)
 );
 

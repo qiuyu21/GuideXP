@@ -5,7 +5,7 @@ import "./login.css";
 import Logo from "../../static/logo.png";
 import FormValidateHelper from "../formValidate";
 import authService from "../../services/authServices";
-import HTTP from "../../helper/httpHelper";
+import { status_codes, error_codes } from "../../helper/responseHelper";
 
 const definition = {
   email: Joi.string()
@@ -34,9 +34,9 @@ export default function Login() {
       await authService.login(state.data);
       window.location = "/";
     } catch (ex) {
-      if (ex.response && ex.response.status === HTTP.BAD_REQUEST) {
+      if (ex.response && (ex.response.status === status_codes.BAD_REQUEST || ex.response.status === status_codes.FORBIDDEN)) {
         const errors = { ...state.errors };
-        errors.email = ex.response.data;
+        errors.email = ex.response.data.message;
         setState({ ...state, errors });
       }
     }

@@ -2,6 +2,7 @@ const ROLE = require("../helper/roleHelper");
 const RegisterUserHelper = require("../helper/registerHelper");
 const httpHelper = require("../helper/httpHelper");
 
+
 function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
   /**
    * User: GUIDEXP
@@ -112,7 +113,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    *   #Staff
    * }]
    */
-  async function getAllManager(req, res) {}
+  async function getAllManager(req, res) { }
 
   /**
    * User: GUIDEXP, MANAGER
@@ -141,7 +142,7 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    *   Status(User)
    * }]
    */
-  async function getAllStaff(req, res) {}
+  async function getAllStaff(req, res) { }
 
   /**
    * User: GUIDEXP
@@ -163,18 +164,18 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
    * 2: Populate the customer from customer_id
    */
   async function getSingleCustomer(req, res) {
-    const customer_id = req.params.userId;
+    const customer = req.params.userId;
 
     const p1 = User.findOne({
-      Customer: customer_id,
+      Customer: customer,
       Role: ROLE.MANAGER,
     })
       .populate("Customer")
       .lean();
 
-    const p2 = Exhibition.countDocuments({ Customer: customer_id });
+    const p2 = Exhibition.countDocuments({ Customer: customer });
 
-    const p3 = Exhibit.countDocuments({ Customer: customer_id });
+    const p3 = Exhibit.countDocuments({ Customer: customer });
 
     Promise.all([p1, p2, p3]).then((values) =>
       res.status(httpHelper.OK).send(values)
@@ -270,20 +271,14 @@ function UserController(mongoose, User, Customer, Exhibit, Exhibition, Access) {
     await register(ROLE.STAFF);
   }
 
-  async function postGiveWritePermission(req, res) {}
+  async function postGiveWritePermission(req, res) { }
 
-  async function postChangeManager(req, res) {}
+  async function postChangeManager(req, res) { }
 
-  async function postDeleteStaff(req, res) {}
+  async function postDeleteStaff(req, res) { }
 
   async function postCreateSingleGuidexp(req, res) {
-    const { guidexpRegister } = RegisterUserHelper(
-      req,
-      res,
-      mongoose,
-      User,
-      Customer
-    );
+    const { guidexpRegister } = RegisterUserHelper(req, res, mongoose, User, Customer);
     await guidexpRegister();
   }
 

@@ -1,7 +1,7 @@
-const HttpStatus = require("../helper/httpHelper");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwthelper = require("../helper/tokenHelper");
+const { status_codes, error_codes } = require("../helper/responseHelper");
 
 function AuthController(User, Customer) {
   /**
@@ -9,32 +9,44 @@ function AuthController(User, Customer) {
    */
   async function postLogin(req, res) {
     const { email, password } = req.body;
+    const msg = {};
     let user = await User.findOne({ Email: email });
-    if (!user)
+    if (!user) {
+      msg.code = error_codes.ERROR_INPUT_DATA;
+      msg.message = "Invalid username or password";
       return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send("Invalid username or password");
-    if (!user.Active)
-      return res.status(HttpStatus.FORBIDDEN).send("User is not active");
+        .status(status_codes.BAD_REQUEST)
+        .send(msg);
+    }
+    if (!user.Active) {
+      msg.code = error_codes.ERROR_USER_NOT_ACTIVE;
+      msg.message = "User is not active";
+      return res.status(status_codes.FORBIDDEN).send(msg);
+    }
     const match = await bcrypt.compare(password, user.Password);
-    if (!match)
+    if (!match) {
+      msg.code = error_codes.ERROR_INPUT_DATA;
+      msg.message = "Invalid username or password"
       return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send("Invalid username or password");
+        .status(status_codes.BAD_REQUEST)
+        .send(msg);
+    }
 
     const token = await jwthelper.sign(user._doc);
-    res.status(HttpStatus.OK).send({ token: token });
+    msg.message = {};
+    msg.message.token = token;
+    res.status(status_codes.OK).send(msg);
   }
 
   /**
    *User forgot password and get a reset password link
    */
   async function postForget(req, res) {
-    const { email } = req.body;
-    let user = await User.findOne({ Email: email });
-    if (!user) return res.status(HttpStatus.NO_CONTENT).send();
-    if (!user.Acitve)
-      return res.status(HttpStatus.FORBIDDEN).send("User is not active");
+    // const { email } = req.body;
+    // let user = await User.findOne({ Email: email });
+    // if (!user) return res.status(status_codes.NO_CONTENT).send();
+    // if (!user.Acitve)
+    //   return res.status(status_codes.FORBIDDEN).send("User is not active");
     //generate a hash
     //check the last forgot date
   }
@@ -42,11 +54,11 @@ function AuthController(User, Customer) {
   /**
    *
    */
-  function getReset(req, res) {}
+  function getReset(req, res) { }
 
-  function postReset(req, res) {}
+  function postReset(req, res) { }
 
-  function postActivate(req, res) {}
+  function postActivate(req, res) { }
 
   return {
     postLogin,

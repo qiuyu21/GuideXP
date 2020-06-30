@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const HttpStatus = require("./httpHelper");
 const RoleHelper = require("./roleHelper");
 const moment = require("moment");
+const { status_codes, error_codes } = require("./httpHelper");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {
@@ -49,8 +49,12 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
     });
 
     //check whether it is an upsert otherwise send error 400 notifying client user already exists
-    if (doc.lastErrorObject.updatedExisting)
-      return res.status(HttpStatus.BAD_REQUEST).send("User already exists");
+    if (doc.lastErrorObject.updatedExisting) {
+      const msg = {};
+      msg.code = error_codes.ERROR_USER_EXIST;
+      msg.message = "Email already exists";
+      return res.status(status_codes.FORBIDDEN).send(msg);
+    }
 
     if (ROLE === RoleHelper.MANAGER) {
       const customer = new Customer();
@@ -71,9 +75,15 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
     //Send an email to client
 
     //return success response to client
-    if (ROLE === RoleHelper.MANAGER)
-      res.status(HttpStatus.OK).send("New customer has been created");
-    else res.status(HttpStatus.OK).send("User has been created");
+    const msg = {};
+    if (ROLE === RoleHelper.MANAGER) {
+      msg.message = `Customer ${data.name} has been created, and an email with activation link has been sent to ${data.email}`;
+      res.status(status_codes.OK).send(msg);
+    }
+    else {
+      msg.message = `Staff ${data.first_name} has been created, and an email with activation link has been sent to ${data.email}`;
+      res.status(status_codes.OK).send(msg);
+    }
   }
 
   async function guidexpRegister() {
@@ -97,8 +107,8 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
       runValidators: true,
     });
     if (doc.lastErrorObject.updatedExisting)
-      return res.status(HttpStatus.BAD_REQUEST).send("User already exists");
-    res.status(HttpStatus.OK).send("GUIDEXP has been created");
+      return res.status(status_codes.BAD_REQUEST).send("User already exists");
+    res.status(status_codes.OK).send("GUIDEXP has been created");
   }
 
   return {

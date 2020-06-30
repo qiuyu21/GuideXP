@@ -12,36 +12,49 @@
 
 const db = require("../db/db");
 const { User } = db.models;
-const HttpHelper = require("../helper/httpHelper");
+const { status_codes, error_codes } = require("../helper/responseHelper");
 
 module.exports = function (req, res, next) {
   const user = User.findOne({
     Customer: req.user.Customer,
     _id: req.user._id,
   }).populate("Customer");
-  if (!user.Active)
-    return res.status(HttpHelper.FORBIDDEN).send("Your account is not active");
+  const msg = {};
+  if (!user.Active) {
+    msg.code = error_codes.ERROR_USER_NOT_ACTIVE;
+    msg.message = "User is not active";
+    return res.status(status_codes.FORBIDDEN).send(msg);
+  }
 
   const { Customer } = user;
-  if (!Customer.Active)
-    return res.status(HttpHelper.FORBIDDEN).send("Customer is not active");
+  if (!Customer.Active) {
+    msg.code = error_codes.ERROR_USER_NOT_ACTIVE;
+    msg.message = "Customer is not active";
+    return res.status(status_codes.FORBIDDEN).send(msg);
+  }
 
   if (
     !Customer.Subscribed &&
     Customer.Free_Trial &&
     Customer.Free_Trial_End < Date.now()
-  )
-    return res.status(HttpHelper.FORBIDDEN).send("Free trial has ended"); //Don't update Free_Trial to false.
+  ) {
+    msg.code = error_codes.ERROR_FREE_TRIAL_EXPIRE;
+    msg.message = `Free trial has ended at ${Customer.Free_Trial_End}`;
+    return res.status(status_codes.FORBIDDEN).send(msg); //Don't update Free_Trial to false.
+  }
+  if (Customer.Subscribed && Customer.Subscription_End < Date.now()) {
 
-  if (Customer.Subscribed && Customer.Subscription_End < Date.now())
     return res
-      .status(HttpHelper.FORBIDDEN)
+      .status(status_codes.FORBIDDEN)
       .send("Please renew your subscription to continue");
+  }
 
-  if (!Customer.Subscribed && !Customer.Free_Trial)
+  if (!Customer.Subscribed && !Customer.Free_Trial) {
+
     return res
-      .status(HttpHelper.FORBIDDEN)
+      .status(status_codes.FORBIDDEN)
       .send("You need to subscribe to our service to use it");
+  }
 
   next();
 };

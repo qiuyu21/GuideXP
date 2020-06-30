@@ -11,7 +11,7 @@ import {
 } from "antd";
 import moment from "moment";
 import userService from "../../../services/userServices";
-import httpHelper from "../../../helper/httpHelper";
+import { error_codes, status_codes } from "../../../helper/responseHelper";
 
 const layout = {
   labelCol: { span: 6 },
@@ -32,12 +32,13 @@ export default function NewCustomer() {
   };
 
   const doSubmit = (values) => {
-    try {
-      const response = userService.postNewCustomer(values);
-    } catch (ex) {
-      if (ex.response && ex.response.status === httpHelper.BAD_REQUEST) {
-      }
-    }
+    // try {
+    //   const response = userService.postNewCustomer(values);
+    // } catch (ex) {
+    //   if (ex.response && ex.response.status === httpHelper.BAD_REQUEST) {
+    //   }
+    // }
+    console.log(Object.keys(values));
   };
 
   return (
@@ -60,8 +61,7 @@ export default function NewCustomer() {
                   const diff = values.days.diff(now, "days");
                   values.days = diff;
                 } else values.days = 0;
-
-                console.log(values);
+                doSubmit(values);
               }}
             >
               <Form.Item
