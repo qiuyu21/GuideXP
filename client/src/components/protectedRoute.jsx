@@ -17,8 +17,8 @@ export default function RouteProtected({
         return Component ? (
           <Component {...props} user={user} {...rest} />
         ) : (
-          render(props)
-        );
+            render(props)
+          );
       }}
     />
   );

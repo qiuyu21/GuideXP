@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Descriptions, Breadcrumb, Table, Tooltip, Typography } from "antd";
+import { Descriptions, Breadcrumb, Table, Tooltip } from "antd";
 import userService from "../../../services/userServices";
 import { Link } from "react-router-dom";
 import moment from "moment";

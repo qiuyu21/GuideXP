@@ -4,6 +4,7 @@ const db = require("../db/db");
 const { User, Customer } = db.models;
 //
 const asyncMiddleware = require("../middleware/async");
+const validateMiddleware = require("../middleware/validate");
 //
 const AuthController = require("../controllers/authController");
 const {
@@ -13,9 +14,6 @@ const {
   postReset,
   postActivate,
 } = AuthController(User, Customer);
-
-//middleware
-const validate = require("../middleware/validate");
 
 /**
  * Permission: GUIDEXP MANAGER STAFF

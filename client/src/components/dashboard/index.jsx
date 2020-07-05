@@ -2,14 +2,19 @@ import React, { Fragment, useState } from "react";
 import { Layout, Typography, Spin } from "antd";
 import "./index.css";
 import Guidexp from "./nav/guidexp";
-// import Manager from "./sider/manager";
+import Manager from "./nav/manager";
 // import Staff from "./sider/staff";
 import RoleHelper from "../../helper/roleHelper";
 import RouteProtected from "../protectedRoute";
 // import RichEditorExample from "./editor";
+//GUIDEXP Components
 import NewCustomer from "./customer/newcustomer";
 import CustomerList from "./customer/customerlist";
 import CustomerDetail from "./customer/customerdetail";
+
+//MANAGER Components
+import Exhibit from "./exhibit/exhibit";
+//
 import Dashboard from "./dashboard/dashboard";
 import { Switch, Redirect, useHistory } from "react-router-dom";
 import authService from "../../services/authServices";
@@ -47,8 +52,8 @@ export default function Index(props) {
             {user.Role === RoleHelper.GUIDEXP && (
               <Guidexp handleLogout={handleLogout} />
             )}
-            {/* {user.Role === RoleHelper.MANAGER && <Manager />}
-            {user.Role === RoleHelper.STAFF && <Staff />} */}
+            {user.Role === RoleHelper.MANAGER && <Manager handleLogout={handleLogout} />}
+            {/* {user.Role === RoleHelper.STAFF && <Staff /> } */}
           </Sider>
           <Content>
             {loading && <div className="spinner"><Spin /></div>}
@@ -71,6 +76,14 @@ export default function Index(props) {
                 <RouteProtected
                   path="/customer/details/:id"
                   component={CustomerDetail}
+                  setLoading={setLoading}
+                />
+              )}
+
+              {user.Role === RoleHelper.MANAGER && (
+                <RouteProtected
+                  path="/exhibit/new"
+                  component={Exhibit}
                   setLoading={setLoading}
                 />
               )}

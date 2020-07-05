@@ -12,10 +12,16 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
-    Description: {
-      type: String,
-      required: true,
-    },
+    Description: [
+      {
+        Hash: String,
+        Key: {
+          type: String,
+          required: true,
+        },
+        Value: String
+      }
+    ],
   });
   return Translation;
 };

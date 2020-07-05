@@ -93,7 +93,7 @@ router.post(
   "/customer",
   [
     authorizationMiddleware(0b001),
-    validateMiddleware(["name", "description", "first_name", "last_name", "email", "days"]),
+    validateMiddleware("user", ["name", "description", "first_name", "last_name", "email", "days"]),
   ],
   asyncMiddleware(postCreateSingleCustomer)
 );

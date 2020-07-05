@@ -1,20 +1,53 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../db/db");
+const { User, Customer, Exhibit, Exhibition, Access, History } = db.models;
+const { mongoose } = db;
+
+//Middlewares
+const asyncMiddleware = require("../middleware/async");
+const authenticationMiddleware = require("../middleware/token");
+const authorizationMiddleware = require("../middleware/auth");
+const validateMiddleware = require("../middleware/validate");
+
+//Controllers
+const exhibitController = require("../controllers/exhibitController");
+//
+const {
+    getAllExhibit,
+    getSingleExhibit,
+    postCreateSingleExhibit,
+
+} = exhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History);
+
+router.use(authenticationMiddleware);
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
  */
-router.route("/exhibit").get();
+router.get(
+    "/exhibit",
+    authorizationMiddleware(0b111),
+    asyncMiddleware(getAllExhibit)
+);
+
+/**
+ * Permission: GUIDEXP MANAGER STAFF
+ */
+router.get(
+    "/exhibit/:exhibitId",
+    authorizationMiddleware(0b111),
+    asyncMiddleware(getSingleExhibit)
+)
 
 /**
  * Permission: MANAGER
  */
-router.route("/exhibit").post();
-
-/**
- * Permission: GUIDEXP MANAGER STAFF
- */
-router.route("/exhibit/:exhibitId").get();
+router.post(
+    "/exhibit",
+    authorizationMiddleware(0b010),
+    asyncMiddleware(postCreateSingleExhibit)
+)
 
 /**
  * Permission: MANAGER

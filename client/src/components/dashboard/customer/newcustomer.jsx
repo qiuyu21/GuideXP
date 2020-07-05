@@ -32,13 +32,14 @@ export default function NewCustomer() {
   };
 
   const doSubmit = (values) => {
-    // try {
-    //   const response = userService.postNewCustomer(values);
-    // } catch (ex) {
-    //   if (ex.response && ex.response.status === httpHelper.BAD_REQUEST) {
-    //   }
-    // }
-    console.log(Object.keys(values));
+    try {
+      const response = userService.postNewCustomer(values);
+    } catch (ex) {
+      console.log(ex.reponse);
+      if (ex.response && ex.response.status === status_codes.FORBIDDEN) {
+        console.log(ex.response);
+      }
+    }
   };
 
   return (

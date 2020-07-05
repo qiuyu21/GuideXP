@@ -9,50 +9,60 @@ import {
   CreditCardOutlined,
   SettingOutlined,
   LogoutOutlined,
+  TranslationOutlined,
 } from "@ant-design/icons";
 
 const { SubMenu } = Menu;
 
-export default function Manager(props) {
+export default function Manager({ handleLogout }) {
   return (
     <Menu mode="inline">
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
-        <Link>Dashboard</Link>
+        <Link to="#">Dashboard</Link>
       </Menu.Item>
       <SubMenu key="exhibit" title="Exhibit" icon={<PictureOutlined />}>
-        <Menu.Item key="exhibit_list">
-          <Link>Exhibit list</Link>
-        </Menu.Item>
         <Menu.Item key="new_exhibit">
-          <Link>New Exhibit</Link>
+          <Link to="/exhibit/new">New Exhibit</Link>
+        </Menu.Item>
+        <Menu.Item key="exhibit_list">
+          <Link to="#">Exhibit list</Link>
         </Menu.Item>
       </SubMenu>
 
       <SubMenu key="exhibition" title="Exhibition" icon={<AppstoreOutlined />}>
-        <Menu.Item key="exhibition_list">
-          <Link>Exhibition list</Link>
-        </Menu.Item>
         <Menu.Item key="new_exhibition">
-          <Link>New Exhibition</Link>
+          <Link to="#">New Exhibition</Link>
+        </Menu.Item>
+        <Menu.Item key="exhibition_list">
+          <Link to="#">Exhibition list</Link>
         </Menu.Item>
       </SubMenu>
 
+      <Menu.Item key="translation" mode="inline" icon={<TranslationOutlined />}>
+        <Link to="#">Translation</Link>
+      </Menu.Item>
+
       <SubMenu key="user" title="User" icon={<TeamOutlined />}>
         <Menu.Item key="user_list">
-          <Link>User list</Link>
+          <Link to="#">User list</Link>
         </Menu.Item>
         <Menu.Item key="new_user">
-          <Link>New User</Link>
+          <Link to="#">New User</Link>
         </Menu.Item>
       </SubMenu>
       <Menu.Item key="subscription" mode="inline" icon={<CreditCardOutlined />}>
-        <Link>Subscription</Link>
+        <Link to="#">Subscription</Link>
       </Menu.Item>
       <Menu.Item key="setting" mode="inline" icon={<SettingOutlined />}>
-        <Link>Setting</Link>
+        <Link to="#">Setting</Link>
       </Menu.Item>
-      <Menu.Item key="logout" mode="inline" icon={<LogoutOutlined />}>
-        <Link>Log out</Link>
+      <Menu.Item
+        key="logout"
+        mode="inline"
+        icon={<LogoutOutlined />}
+        onClick={handleLogout}
+      >
+        Log out
       </Menu.Item>
     </Menu>
   );

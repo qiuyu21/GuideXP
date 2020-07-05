@@ -1,45 +1,82 @@
-const validate = require("../helper/validateHelper");
-const httpHelper = require("../helper/httpHelper");
+const Joi = require('@hapi/joi');
+const auth = require("../helper/validate/auth");
+const exhibit = require("../helper/validate/exhibit");
+const user = require("../helper/validate/user");
 const { status_codes, error_codes } = require("../helper/responseHelper");
 //Validate the request body
-
-module.exports = function (validKeys) {
+/**
+ * route      :: String : ["auth", "exhibit", "user"]
+ * valid_keys :: Array  : Keys that can be found in the request body
+ * must       :: Array  : Keys must be presented in the request body   
+ * optional   :: Array  : Keys' presence are optinal in the request body
+ */
+module.exports = function (route, valid_keys, must = null, optional = null) {
   return async function (req, res, next) {
-    //Validate correct number of parameters and correct parameters
-    const clonekeys = [...validKeys]; //*important dont mutate validKeys anytime.
-    const keys = Object.keys(req.body);
-    const invalidMsg = `Valid keys are ${validKeys}, but received ${keys}`;
+    //If must is null, all valid keys must be presented. 
+    if (!must) must = valid_keys;
     const msg = {};
-    if (clonekeys.length !== keys.length) {
+    const body_keys = Object.keys(req.body);
 
-      return res
-        .status(httpHelper.BAD_REQUEST)
-        .send(invalidMsg);
+    //Check if all json keys are valid keys
+    const is_valid = body_keys.every(v => valid_keys.includes(v));
+    if (!is_valid) {
+      msg.code = error_codes.ERROR_INPUT_PARAMETER;
+      msg.message = `Valid JSON keys are ${valid_keys}, but received ${body_keys}`;
+      return res.status(status_codes.BAD_REQUEST).send(msg);
     }
 
-    for (key of keys) {
-      if (!clonekeys.includes(key))
-        return res
-          .status(httpHelper.BAD_REQUEST)
-          .send(invalidMsg);
+    //Check if required keys are all presented
+    const clonekeys = [...must];
+    for (const key of body_keys) {
+      if (!clonekeys.includes(key)) {
+        msg.code = error_codes.ERROR_INPUT_PARAMETER;
+        msg.message = `Following keys are required: ${must}, but only received ${body_keys}`;
+        return res.status(status_codes.BAD_REQUEST).send(msg);
+      }
       else {
-        //remove the key from validkeys
+        //remove the key from clonekeys
         const index = clonekeys.indexOf(key);
         clonekeys.splice(index, 1);
       }
     }
 
-    if (clonekeys.length !== 0)
-      return res
-        .status(httpHelper.BAD_REQUEST)
-        .send(invalidMsg);
+    //If there is no optional keys, and received the same keys more than once. 
+    if (!optional && !clonekeys.length) {
+      msg.code = error_codes.ERROR_INPUT_PARAMETER;
+      msg.message = `Received the same keys more than once. Received: ${body_keys}`;
+    }
+
+
+    const definition = {};
+
+    Object.keys(data).forEach((key) => {
+      if (must.includes(key) || (optional.includes(key) && data.key)) {
+        switch (route) {
+          case "auth":
+            definition[key] = auth[key];
+            break;
+
+          case "exhibit":
+            definition[key] = exhibit[key];
+            break;
+
+          case "user":
+            definition[key] = user[key];
+            break;
+        }
+      }
+    });
 
     //Validate each input format
     try {
-      await validate(req.body);
+      const schema = Joi.object(definition).unknown(true);
+      await schema.validateAsync(data, { abortEarly: false });
       next();
     } catch (err) {
-      return res.status(httpHelper.BAD_REQUEST).send(err.details);
+      msg.code = error_codes.ERROR_INPUT_FORMAT;
+      msg.message = err.details;
+      console.log(err);
+      return res.status(status_codes.BAD_REQUEST).send(msg);
     }
   };
 };

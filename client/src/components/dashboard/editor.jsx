@@ -8,7 +8,7 @@ import {
 } from "draft-js";
 import "./editor.css";
 import "../../../node_modules/draft-js/dist/Draft.css";
-class RichEditorExample extends React.Component {
+class Reditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = { editorState: EditorState.createEmpty() };
@@ -88,7 +88,6 @@ class RichEditorExample extends React.Component {
             handleKeyCommand={this.handleKeyCommand}
             keyBindingFn={this.mapKeyToEditorCommand}
             onChange={this.onChange}
-            // placeholder="Tell a story..."
             ref="editor"
             spellCheck={true}
           />
@@ -201,4 +200,4 @@ const InlineStyleControls = (props) => {
   );
 };
 
-export default RichEditorExample;
+export default Reditor;

@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const RoleHelper = require("./roleHelper");
 const moment = require("moment");
-const { status_codes, error_codes } = require("./httpHelper");
+const { status_codes, error_codes } = require("./responseHelper.js");
 
 function RegisterUserHelper(req, res, mongoose, User, Customer) {
   async function register(ROLE) {

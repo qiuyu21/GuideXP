@@ -5,6 +5,7 @@ const ExhibitSchema = require("./schemas/Exhibit");
 const ExhibitionSchema = require("./schemas/Exhibition");
 const TranslationSchema = require("./schemas/Translation");
 const AccessSchema = require("./schemas/Access");
+const HistorySchema = require("./schemas/History");
 
 //Models
 const User = mongoose.model("User", UserSchema(mongoose));
@@ -13,7 +14,7 @@ const Exhibit = mongoose.model("Exhibit", ExhibitSchema(mongoose));
 const Exhibition = mongoose.model("Exhibition", ExhibitionSchema(mongoose));
 const Translation = mongoose.model("Translation", TranslationSchema(mongoose));
 const Access = mongoose.model("Access", AccessSchema(mongoose));
-
+const History = mongoose.model("History", HistorySchema(mongoose));
 //
 const db = {};
 db.mongoose = mongoose;
@@ -24,6 +25,7 @@ db.models.Exhibit = Exhibit;
 db.models.Exhibition = Exhibition;
 db.models.Translation = Translation;
 db.models.Access = Access;
+db.models.History = History;
 
 //database connection settings
 const options = {
