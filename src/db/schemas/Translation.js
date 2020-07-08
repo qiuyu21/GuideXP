@@ -9,8 +9,8 @@ module.exports = function (mongoose) {
       enum: ["Created", "Ready", "Paused", "Deleted"],
     },
     Name: {
-      type: String,
-      required: true,
+      Hash: String,
+      Value: String
     },
     Description: [
       {
@@ -22,6 +22,7 @@ module.exports = function (mongoose) {
         Value: String
       }
     ],
+    Last_Modified: Date,
   });
   return Translation;
 };

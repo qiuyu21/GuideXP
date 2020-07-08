@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
-const { User, Customer, Exhibit, Exhibition, Access, History } = db.models;
+const { User, Customer, Exhibit, Exhibition, Access, History, Translation } = db.models;
 const { mongoose } = db;
 
 //Middlewares
@@ -18,7 +18,7 @@ const {
     getSingleExhibit,
     postCreateSingleExhibit,
 
-} = exhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History);
+} = exhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History, Translation);
 
 router.use(authenticationMiddleware);
 

@@ -26,9 +26,9 @@ module.exports = function (route, valid_keys, must = null, optional = null) {
     }
 
     //Check if required keys are all presented
-    const clonekeys = [...must];
-    for (const key of body_keys) {
-      if (!clonekeys.includes(key)) {
+    const clonekeys = [...body_keys];
+    for (const key of must) {
+      if (!body_keys.includes(key)) {
         msg.code = error_codes.ERROR_INPUT_PARAMETER;
         msg.message = `Following keys are required: ${must}, but only received ${body_keys}`;
         return res.status(status_codes.BAD_REQUEST).send(msg);
@@ -49,20 +49,13 @@ module.exports = function (route, valid_keys, must = null, optional = null) {
 
     const definition = {};
 
-    Object.keys(data).forEach((key) => {
-      if (must.includes(key) || (optional.includes(key) && data.key)) {
+    body_keys.forEach((key) => {
+      //Validate all required keys and optional keys with value
+      if (must.includes(key) || (optional.includes(key) && req.data[key])) {
         switch (route) {
-          case "auth":
-            definition[key] = auth[key];
-            break;
-
-          case "exhibit":
-            definition[key] = exhibit[key];
-            break;
-
-          case "user":
-            definition[key] = user[key];
-            break;
+          case "auth": definition[key] = auth[key]; break;
+          case "exhibit": definition[key] = exhibit[key]; break;
+          case "user": definition[key] = user[key]; break;
         }
       }
     });
@@ -70,12 +63,11 @@ module.exports = function (route, valid_keys, must = null, optional = null) {
     //Validate each input format
     try {
       const schema = Joi.object(definition).unknown(true);
-      await schema.validateAsync(data, { abortEarly: false });
+      await schema.validateAsync(req.body, { abortEarly: false });
       next();
     } catch (err) {
       msg.code = error_codes.ERROR_INPUT_FORMAT;
       msg.message = err.details;
-      console.log(err);
       return res.status(status_codes.BAD_REQUEST).send(msg);
     }
   };

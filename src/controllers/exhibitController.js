@@ -1,6 +1,7 @@
 const { status_codes, error_codes } = require("../helper/responseHelper");
+const cryto = require("crypto");
 
-function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History) {
+function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History, Translation) {
   async function getAllExhibit(req, res) { }
 
   async function getSingleExhibit(req, res) { }
@@ -11,13 +12,12 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
   * req.body: {name, exhibition, languages, audio, description}
   */
   async function postCreateSingleExhibit(req, res) {
-    const { exhibit_name, exhibition, languages, audio, exhibit_description } = req.body;
-    const query = {};
+    const { name, exhibition, languages, audio, description } = req.body;
     const msg = {};
-    let validLanguages = [];
-    //check the exhibition validity
+    let exhibition_languages = [];
+    //If this is part of an exhibition, check if the exhibition exists
     if (exhibition) {
-      const exhibition_query = await Exhibition.findById(exhibtion);
+      const exhibition_query = await Exhibition.findOne({ Customer: req.user.Customer, _id: exhibition });
       if (!exhibition_query) {
         msg.code = error_codes.ERROR_EXHIBITION_NOT_FOUND;
         msg.message = `No exhibition with id ${exhibiton} found in the database`;
@@ -25,13 +25,45 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
       }
       //Loop through exhibition translation
       for (const translation of exhibition_query.Translation) {
-        validLanguages.push(translation.Language_Code);
+        exhibition_languages.push(translation.Language_Code);
       }
     }
 
     const { blocks } = description;
-    
+    const exhibit = new Exhibit();
+    exhibit.Customer = req.user.Customer;
+    exhibit.Name = name;
+    if (exhibition) exhibit.Exhibition = exhibition;
+    exhibit.Status = "Created";
+    //Find the largest 
+    exhibit.description = description;
+    //Add the translation
+    const exhibit_translation = [];
+    if (exhibition) {
+      exhibition_languages.forEach((value) => {
+        const translation = new Translation();
+        translation.Status = "Created";
+        translation.Language_Code = value;
+        translation.Description = [];
+        exhibit_translation.push(translation);
+      });
+    } else {
+      languages.forEach((value) => {
+        const translation = new Translation();
+        translation.Status = "Created";
+        translation.Language_Code = value;
+        translation.Description = [];
+        exhibit_translation.push(translation);
+      })
+    }
 
+    exhibit_translation.forEach((value) => {
+      blocks.forEach((block) => {
+        const description_block = {};
+        description_block.key = block.key;
+        value.Description.push(description_block);
+      })
+    })
 
 
 
