@@ -61,3 +61,7 @@
 .RichEditor-activeButton {
   color: #5890ff;
 }
+
+.RichEditor-root-error {
+  border-color: #ff4d4f !important;
+}

@@ -54,6 +54,14 @@
 }
 
 /*
+H1 tag under section tag is smaller than H2 tag
+impose H1 to 2em, which is default for browser 
+*/
+h1 {
+  font-size: 2em !important; 
+}
+
+/*
 md device breakpoint (768) + sider width (200)
 */
 @media only screen and (max-width: 968px) {

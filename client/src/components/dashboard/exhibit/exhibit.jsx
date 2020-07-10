@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Descriptions,
     Breadcrumb,
@@ -11,6 +11,8 @@ import {
 import Reditor from "../editor";
 import { InboxOutlined } from '@ant-design/icons';
 import LANGUAGES from "../../../helper/languageHelper";
+import { EditorState, convertToRaw } from "draft-js";
+import exhibitServices from "../../../services/exhibitServices";
 
 const { Option } = Select;
 
@@ -25,8 +27,9 @@ const tailLayout = {
 
 export default function Exhibit(props) {
     const [form] = Form.useForm();
-
     const languages = [];
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [descriptionError, setDescriptionError] = useState(false);
     const keys = Object.keys(LANGUAGES);
     for (const key of keys) {
         languages.push(<Option key={LANGUAGES[key].code}>{LANGUAGES[key].language}</Option>)
@@ -41,6 +44,33 @@ export default function Exhibit(props) {
         return e && e.fileList;
     };
 
+    const descriptionOnBlur = () => {
+        const error = !editorState.getCurrentContent().hasText();
+        setDescriptionError(error);
+    }
+
+    const descriptionOnChange = (editorState) => {
+        setEditorState(editorState);
+    }
+
+    const submit = async () => {
+        form.validateFields().then(values => {
+            if (!editorState.getCurrentContent().hasText()) {
+                setDescriptionError(true);
+            } else {
+                //Submit the form
+                const data = { ...values };
+                data.description = convertToRaw(editorState.getCurrentContent());
+                exhibitServices.postNewExhibit(data);
+            }
+        }).catch(err => {
+            if (!editorState.getCurrentContent().hasText()) {
+                setDescriptionError(true);
+            }
+        })
+    }
+
+
     return (
         <div className="dashboard-content-container">
             <Breadcrumb style={{ marginBottom: "16px" }}>
@@ -49,12 +79,8 @@ export default function Exhibit(props) {
             </Breadcrumb>
             <Descriptions title="Add A New Exhibit" bordered />
 
-            <Form form={form} {...layout}
-                onFinish={values => {
-                    console.log(values);
-                }}
-            >
-                <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter exhibit\'s name' }]} className="custom-flex">
+            <Form form={form} {...layout}>
+                <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter exhibit\'s name' }]} className="custom-flex" validateTrigger="onBlur">
                     <Input />
                 </Form.Item>
 
@@ -70,7 +96,6 @@ export default function Exhibit(props) {
                         showSearch={false}
                         showArrow={true}
                         placeholder="Add Supportive Languages"
-                        style={{ width: "100%" }}
                     >
                         {languages}
                     </Select>
@@ -79,21 +104,19 @@ export default function Exhibit(props) {
                 <Form.Item label="Audio" className="custom-flex">
                     <Form.Item name="audio" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
                         <Upload.Dragger name="files" action="/upload.do" accept="audio/*" beforeUpload={() => false}>
-                            <p className="ant-upload-drag-icon">
-                                <InboxOutlined />
-                            </p>
+                            <p className="ant-upload-drag-icon"><InboxOutlined /></p>
                             <p className="ant-upload-text">Click or drag file to this area to upload</p>
                             <p className="ant-upload-hint">Upload an audio file</p>
                         </Upload.Dragger>
                     </Form.Item>
                 </Form.Item>
 
-                <Form.Item label="Description" className="custom-flex">
-                    <Reditor />
+                <Form.Item name="description" label="Description" className="custom-flex" required help={descriptionError && "Please enter exhibit's description"} validateStatus={descriptionError && "error"}>
+                    <Reditor editorState={editorState} descriptionError={descriptionError} descriptionOnBlur={descriptionOnBlur} descriptionOnChange={descriptionOnChange} />
                 </Form.Item>
 
                 <Form.Item {...tailLayout} className="custom-flex">
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="button" onClick={submit}>
                         Add
                     </Button>
                 </Form.Item>

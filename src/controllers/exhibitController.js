@@ -35,7 +35,6 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     exhibit.Name = name;
     if (exhibition) exhibit.Exhibition = exhibition;
     exhibit.Status = "Created";
-    //Find the largest 
     exhibit.description = description;
     //Add the translation
     const exhibit_translation = [];
@@ -54,19 +53,22 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
         translation.Language_Code = value;
         translation.Description = [];
         exhibit_translation.push(translation);
-      })
+      });
     }
-
+    //Save the references to each block 
     exhibit_translation.forEach((value) => {
       blocks.forEach((block) => {
         const description_block = {};
         description_block.key = block.key;
         value.Description.push(description_block);
       })
-    })
+    });
 
-
-
+    //Save the exhibit
+    await exhibit.save();
+    //Return the id to the client
+    msg.message = { "_id": exhibit._id };
+    return res.status(status_codes.OK).send(msg);
   }
 
 

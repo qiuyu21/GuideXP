@@ -1,20 +1,18 @@
 import React from "react";
 import {
   Editor,
-  EditorState,
   getDefaultKeyBinding,
   RichUtils,
-  convertToRaw,
 } from "draft-js";
 import "./editor.css";
 import "../../../node_modules/draft-js/dist/Draft.css";
-class Reditor extends React.Component {
+export default class Reditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+    this.editorState = this.props.editorState;
+    this.descriptionError = this.props.descriptionError;
 
-    this.focus = () => this.refs.editor.focus();
-    this.onChange = (editorState) => this.setState({ editorState });
+    this.focus = () => { this.refs.editor.focus(); }
 
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
@@ -23,9 +21,10 @@ class Reditor extends React.Component {
   }
 
   _handleKeyCommand(command, editorState) {
+
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
-      this.onChange(newState);
+      this.props.descriptionOnChange(newState);
       return true;
     }
     return false;
@@ -35,11 +34,11 @@ class Reditor extends React.Component {
     if (e.keyCode === 9 /* TAB */) {
       const newEditorState = RichUtils.onTab(
         e,
-        this.state.editorState,
+        this.props.editorState,
         4 /* maxDepth */
       );
-      if (newEditorState !== this.state.editorState) {
-        this.onChange(newEditorState);
+      if (newEditorState !== this.props.editorState) {
+        this.props.descriptionOnChange(newEditorState);
       }
       return;
     }
@@ -47,49 +46,50 @@ class Reditor extends React.Component {
   }
 
   _toggleBlockType(blockType) {
-    this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
+    this.props.descriptionOnChange(RichUtils.toggleBlockType(this.props.editorState, blockType));
   }
 
   _toggleInlineStyle(inlineStyle) {
-    this.onChange(
-      RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle)
+    this.props.descriptionOnChange(
+      RichUtils.toggleInlineStyle(this.props.editorState, inlineStyle)
     );
   }
 
   render() {
-    const { editorState } = this.state;
-    const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
-    console.log(blocks);
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
     let className = "RichEditor-editor";
-    var contentState = editorState.getCurrentContent();
+    var contentState = this.props.editorState.getCurrentContent();
     if (!contentState.hasText()) {
       if (contentState.getBlockMap().first().getType() !== "unstyled") {
         className += " RichEditor-hidePlaceholder";
       }
     }
 
+    const rootClassName = this.props.descriptionError ? "RichEditor-root RichEditor-root-error" : "RichEditor-root";
+
     return (
-      <div className="RichEditor-root">
+      <div className={rootClassName}>
         <BlockStyleControls
-          editorState={editorState}
+          editorState={this.props.editorState}
           onToggle={this.toggleBlockType}
         />
         <InlineStyleControls
-          editorState={editorState}
+          editorState={this.props.editorState}
           onToggle={this.toggleInlineStyle}
         />
         <div className={className} onClick={this.focus}>
           <Editor
             blockStyleFn={getBlockStyle}
             customStyleMap={styleMap}
-            editorState={editorState}
+            editorState={this.props.editorState}
             handleKeyCommand={this.handleKeyCommand}
             keyBindingFn={this.mapKeyToEditorCommand}
-            onChange={this.onChange}
+            onChange={this.props.descriptionOnChange}
+            onBlur={this.props.descriptionOnBlur}
             ref="editor"
             spellCheck={true}
+            placeholder="Write description here..."
           />
         </div>
       </div>
@@ -199,5 +199,3 @@ const InlineStyleControls = (props) => {
     </div>
   );
 };
-
-export default Reditor;
