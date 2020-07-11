@@ -74,7 +74,7 @@ The followings describe the APIs for the admin system, excluding the public doma
 | Route                               | HTTP Method   |Permission       | Short Description                                                                |
 | ---------------------               |:-------------:|:-------------:  |:-----------------:                                                               |
 | /exhibit                            | POST          | MANAGER         | MANAGER creates a single exhibit.                                                | 
-| /exhibit/all                        | GET           | ALL             | GUIDEXP gets all exhibits. MANAGER & STAFF get all his/her exhibits.             | 
+| /exhibit                            | GET           | ALL             | GUIDEXP gets all exhibits. MANAGER & STAFF get all his/her exhibits.             | 
 | /exhibit/:exhibitId                 | GET           | ALL             | GUIDEXP gets a single exhibits. MANAGER & STAFF get one of his/her exhibits.     | 
 | /exhibit/:exhibitId                 | PUT           | MANAGER         | MANAGER updates a single exhibit.                                                | 
 | /exhibit/:exhibitId/:language_code  | PUT           | MANAGER, STAFF* | MANAGER updates a single ehxibit of a language. STAFF can if given the perm.     |
