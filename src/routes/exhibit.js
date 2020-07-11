@@ -23,64 +23,75 @@ const {
 router.use(authenticationMiddleware);
 
 /**
+ * Permission: MANAGER
+ * Create a single exhibit
+ */
+router.post(
+    "/",
+    authorizationMiddleware(0b010),
+    asyncMiddleware(postCreateSingleExhibit)
+)
+
+
+/**
  * Permission: GUIDEXP MANAGER STAFF
+ * Get all exhibits
  */
 router.get(
-    "/exhibit",
+    "/all",
     authorizationMiddleware(0b111),
     asyncMiddleware(getAllExhibit)
 );
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
+ * Get a single exhibit
  */
 router.get(
-    "/exhibit/:exhibitId",
+    "/:exhibitId",
     authorizationMiddleware(0b111),
     asyncMiddleware(getSingleExhibit)
 )
 
 /**
  * Permission: MANAGER
+ * Update a single exhibit
  */
-router.post(
-    "/exhibit",
-    authorizationMiddleware(0b010),
-    asyncMiddleware(postCreateSingleExhibit)
-)
-
-/**
- * Permission: MANAGER
- */
-router.route("/exhibit/:exhibitId").put();
+router.route("/:exhibitId").put();
 
 /**
  * Permission: MANAGER STAFF(with permission)
+ * Update a single exhibit of a language 
  */
 router.route("/exhibit/:exhibitId/:language_code").put();
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
+ * Get all exhibitions
  */
-router.route("/exhibition").get();
+router.route("/all/exhibition").get();
 
 /**
  * Permission: MANAGER
+ * Create a single exhibition
  */
 router.route("/exhibition").post();
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
+ * Get a single exhibition
  */
 router.route("/exhibition/:exhibitionId").get();
 
 /**
  * Permission: MANAGER
+ * Update a single exhibiton
  */
 router.route("/exhibition/:exhibitionId").put();
 
 /**
  * Permission: MANAGER
+ * Update a single exhibition of a language
  */
 router.route("/exhibition/:exhibitionId/:language_code").put();
 

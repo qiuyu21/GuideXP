@@ -19,6 +19,7 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
+    Audio_Path: String,
     Description: {
       type: String,
       required: true,

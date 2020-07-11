@@ -4,7 +4,7 @@ const CHINESE_TRADITIONAL = { code: "zh-tw", language: "Chinese Traditional" };
 const CZECH = { code: "cs", language: "Czech" };
 const DANISH = { code: "da", language: "Danish" };
 const DUTCH = { code: "nl", language: "Dutch" };
-const ENGLISH = { code: "en", language: "English" };
+// const ENGLISH = { code: "en", language: "English" };
 const FINNISH = { code: "fi", language: "Finnish" };
 const FRENCH = { code: "fr", language: "French" };
 const GERMAN = { code: "de", language: "German" };
@@ -27,7 +27,7 @@ export default Object.freeze({
   CZECH,
   DANISH,
   DUTCH,
-  ENGLISH,
+  // ENGLISH,
   FINNISH,
   FRENCH,
   GERMAN,

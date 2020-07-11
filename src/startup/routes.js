@@ -4,9 +4,9 @@ const bodyParser = require("body-parser");
 const cros = require("cors");
 //security middleware
 const helmet = require("helmet");
-//
 const auth = require("../routes/auth");
 const user = require("../routes/user");
+const exhibit = require("../routes/exhibit");
 const error = require("../middleware/error");
 
 module.exports = function (app) {
@@ -17,6 +17,6 @@ module.exports = function (app) {
 
   app.use("/api/auth", auth);
   app.use("/api/user", user);
-
+  app.use("/api/exhibit", exhibit);
   app.use(error);
 };

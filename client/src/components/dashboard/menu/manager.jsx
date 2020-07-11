@@ -31,7 +31,7 @@ export default function Manager({ handleLogout }) {
 
       <SubMenu key="exhibition" title="Exhibition" icon={<AppstoreOutlined />}>
         <Menu.Item key="new_exhibition">
-          <Link to="#">New Exhibition</Link>
+          <Link to="/exhibition/new">New Exhibition</Link>
         </Menu.Item>
         <Menu.Item key="exhibition_list">
           <Link to="#">Exhibition list</Link>

@@ -25,7 +25,7 @@ const tailLayout = {
     wrapperCol: { offset: 4, span: 20 },
 };
 
-export default function Exhibit(props) {
+export default function Exhibit({ setLoading }) {
     const [form] = Form.useForm();
     const languages = [];
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -53,15 +53,22 @@ export default function Exhibit(props) {
         setEditorState(editorState);
     }
 
-    const submit = async () => {
-        form.validateFields().then(values => {
+    const submit = () => {
+        form.validateFields().then(async (values) => {
             if (!editorState.getCurrentContent().hasText()) {
                 setDescriptionError(true);
             } else {
                 //Submit the form
                 const data = { ...values };
                 data.description = convertToRaw(editorState.getCurrentContent());
-                exhibitServices.postNewExhibit(data);
+                try {
+                    setLoading(true);
+                    await exhibitServices.postNewExhibit(data);
+                } catch (ex) {
+
+                } finally {
+                    setLoading(false);
+                }
             }
         }).catch(err => {
             if (!editorState.getCurrentContent().hasText()) {
