@@ -35,3 +35,19 @@
 ![](gxp-model.png)
 
 - https://app.lucidchart.com/documents/view/74dc46a3-9369-4b2e-a337-6eb3b2eb0668
+
+## API Endpoints
+
+There are four endpoints top level domains, which are, auth, user, exhibit, and public. 
+
+The followings describe the APIs for the admin system, excluding the public domain which serves the frontend. 
+
+- auth's APIs
+
+| Route                  | HTTP Method   |Permission     |req.body            |res            | 
+| ---------------------  |:-------------:|:-------------:|:-----------------: |:-------------:|
+| /auth/login            | POST          | ALL           | {email, password}  |               |
+| /auth/forget           | POST          | ALL           | {email}            |               | 
+| /auth/reset/:userId    | GET           | ALL           |                    |               |
+| /auth/reset/:userId    | POST          | ALL           | {token, password}  |               | 
+| /auth/activate/:userId | POST          | ALL           | {token}            |               | 
