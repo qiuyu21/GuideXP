@@ -38,10 +38,6 @@
 
 ## API Endpoints
 
-There are four endpoints top level domains, which are, auth, user, exhibit, and public. 
-
-The followings describe the APIs for the admin system, excluding the public domain which serves the frontend. 
-
 - auth's APIs
 
 | Route                  | HTTP Method   |Permission     |Short Description                                                                                   |
