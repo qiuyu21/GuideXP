@@ -118,7 +118,6 @@ export default function CustomerList() {
       const newData = results.map((value, index) => {
         return { key: index, ...value };
       });
-      console.log(newData);
       setData(newData);
       setTotalDocs(total);
       setLoading(false);
@@ -140,7 +139,7 @@ export default function CustomerList() {
         <Breadcrumb.Item>Customer</Breadcrumb.Item>
         <Breadcrumb.Item>List</Breadcrumb.Item>
       </Breadcrumb>
-      <Descriptions title="Customer List" bordered />
+      <Descriptions title="All Customer" bordered />
       <Table
         loading={loading}
         columns={columns}

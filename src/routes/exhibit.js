@@ -38,7 +38,7 @@ router.post(
  * Get all exhibits
  */
 router.get(
-    "/all",
+    "/",
     authorizationMiddleware(0b111),
     asyncMiddleware(getAllExhibit)
 );

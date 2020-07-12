@@ -2,6 +2,8 @@ import React from "react";
 import { Switch, Redirect } from "react-router-dom";
 import RouteProtected from "../../protectedRoute";
 import Exhibit from "../exhibit/exhibit";
+import ExhibitList from "../exhibit/exhibitList";
+import ExhibitView from "../exhibit/exhibitView";
 import Exhibition from "../exhibition/exhibition";
 import ManagerDashboard from "../role/managerDashboard";
 
@@ -11,6 +13,16 @@ export default function ManagerRoutes({ setLoading }) {
             <RouteProtected
                 path="/exhibit/new"
                 component={Exhibit}
+                setLoading={setLoading}
+            />
+            <RouteProtected
+                path="/exhibit/list"
+                component={ExhibitList}
+                setLoading={setLoading}
+            />
+            <RouteProtected
+                path="/exhibit/:id"
+                component={ExhibitView}
                 setLoading={setLoading}
             />
             <RouteProtected

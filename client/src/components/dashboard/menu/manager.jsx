@@ -25,7 +25,7 @@ export default function Manager({ handleLogout }) {
           <Link to="/exhibit/new">New Exhibit</Link>
         </Menu.Item>
         <Menu.Item key="exhibit_list">
-          <Link to="#">Exhibit list</Link>
+          <Link to="/exhibit/list">Exhibit list</Link>
         </Menu.Item>
       </SubMenu>
 
@@ -37,10 +37,6 @@ export default function Manager({ handleLogout }) {
           <Link to="#">Exhibition list</Link>
         </Menu.Item>
       </SubMenu>
-
-      <Menu.Item key="translation" mode="inline" icon={<TranslationOutlined />}>
-        <Link to="#">Translation</Link>
-      </Menu.Item>
 
       <SubMenu key="user" title="User" icon={<TeamOutlined />}>
         <Menu.Item key="user_list">

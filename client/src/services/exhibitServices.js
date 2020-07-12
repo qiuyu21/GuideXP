@@ -9,6 +9,14 @@ export async function postNewExhibit(data) {
     return response;
 }
 
+export async function getAllExhibits({ page, col, order }) {
+    const p = page ? `page=${page}` : "";
+    const s = order ? `&col=${col}&order=${order}` : "";
+    const { data } = await http.get(endpoint + `?${p + s}`);
+    return data;
+}
+
 export default {
     postNewExhibit,
+    getAllExhibits
 };

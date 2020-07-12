@@ -16,10 +16,7 @@ module.exports = function (mongoose) {
     Description: [
       {
         Hash: String,
-        Key: {
-          type: String,
-          required: true,
-        },
+        Key: String,
         Value: String
       }
     ],

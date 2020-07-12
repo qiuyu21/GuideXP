@@ -10,3 +10,6 @@ module.exports = Object.freeze({
   NOT_ALLOWED: 405,
   INTERNAL_SERVER_ERROR: 500,
 });
+
+
+//Don't use this file, use responseHelper.js, this file will eventually get deleted soon.

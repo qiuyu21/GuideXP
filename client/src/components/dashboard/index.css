@@ -61,14 +61,57 @@ h1 {
   font-size: 2em !important; 
 }
 
+
+/*
+Classes for texts
+*/
+.text-small {
+  font-size: 12px !important;
+}
+
+.text-grey {
+  color: #586069!important;
+}
+
+/*
+Classes for space, margin, padding
+*/
+
+/*
+Header css for customer view, exhibit view, and exhibition view
+*/
+
+.ViewHead{
+  box-sizing: border-box;
+  display: flex;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.ViewHead .Heading{
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  flex: 1 1 auto;
+}
+
+.form-group {
+  margin: 15px 0px;
+  width: 100%;
+}
+
+.form-group .ant-col {
+  width: 100%;
+}
+
 /*
 md device breakpoint (768) + sider width (200)
 */
 @media only screen and (max-width: 968px) {
-  .dashboard-content-container {
-  }
+
   .custom-flex {
     flex-direction: column;
+    margin-bottom: 8px;
   }
 
   .custom-flex .ant-col {
