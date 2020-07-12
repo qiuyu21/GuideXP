@@ -38,6 +38,8 @@
 
 ## API Endpoints
 
+For specific api documentation, go to https://docs.google.com/document/d/1fQh_PRGdA6DE4-AGwWQQ43tOuJ5fATAqogAmaVR3MWA/edit?usp=sharing
+
 - auth's APIs
 
 | Route                  | HTTP Method   |Permission     |Short Description                                                                                   |
