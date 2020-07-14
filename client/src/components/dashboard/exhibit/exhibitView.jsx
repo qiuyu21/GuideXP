@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Breadcrumb, Button, Form, Input, Select, Space } from "antd";
+import React, { useState, useEffect, Fragment } from "react";
+import { Breadcrumb, Button, Badge, Form, Input, Select, Space } from "antd";
 import Reditor from "../editor";
 import { EditorState, convertFromRaw } from "draft-js";
 import exhibitService from "../../../services/exhibitServices";
 import LanguageSelect from "../common/languageSelect";
+import "./exhibit.css";
+import { codeTolanguage, languageTocode } from "../../../helper/languageHelper";
+const { Option } = Select;
 
 export default function ExhibitView(props) {
     const { setLoading } = props;
     const exhibit_id = props.computedMatch.params.id;
-    const [data, setData] = useState({});
+    const [data, setData] = useState(null);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [descriptionError, setDescriptionError] = useState(false);
     useEffect(() => {
@@ -17,6 +20,8 @@ export default function ExhibitView(props) {
                 setLoading(true);
                 const [exhibit, exhibition] = await exhibitService.getSingleExhibit(exhibit_id);
                 exhibit.Description = JSON.parse(exhibit.Description);
+                exhibit.defaultValues = exhibit.Translation.map((value) => { return value.Language_Code });
+                console.log(exhibit);
                 setEditorState(EditorState.createWithContent(convertFromRaw(exhibit.Description)))
                 setData({ exhibit, exhibition });
             } catch (ex) {
@@ -46,7 +51,7 @@ export default function ExhibitView(props) {
             <div className="ViewHead">
                 <h2 className="Heading">Exhibit</h2>
             </div>
-            <Form layout="vertical" name="basic">
+            <Form layout="vertical">
                 <Form.Item name="name" label="Exhibit Name" rules={[{ required: true, message: 'Please enter exhibit\'s name' }]} className="form-group" validateTrigger="onBlur">
                     <Input />
                 </Form.Item>
@@ -70,6 +75,10 @@ export default function ExhibitView(props) {
                         you will have to complete all names and descriptions of this exhibit, including foreign languages
                         it supports.
                     </p>
+
+                    {data && data.exhibit.Status === "Paused" && <Badge status="error" text="Paused" className="exhibit-status" />}
+                    {data && data.exhibit.Status === "Ready" && <Badge status="success" text="Ready" className="exhibit-status" />}
+
                     <Form.Item name="status" style={{ marginBottom: 0 }}>
                         <Select placeholder="Change the Status">
                             <Select.Option value="ready">Ready</Select.Option>
@@ -81,10 +90,11 @@ export default function ExhibitView(props) {
                 <Form.Item label="Identifier" className="form-group">
                     <p className="text-small text-grey">
                         To boost access convenience for users, you can assign a number which users can use as
-                        a part of the access scheme to this exhibit. No more than one exhibits can use the same number. The only exemption
+                        part of the access scheme to this exhibit. No more than one exhibits can use the same number. The only exemption
                         applies when more than one exhibits are having the same exhibit identifier is one exhibit is belonged to an exhibition while another
                         is either not belonged any exhibition or is belonged to a different exhibition.
                     </p>
+
                     <Form.Item name="identifier" style={{ marginBottom: 0 }}>
                         <Input />
                     </Form.Item>
@@ -124,10 +134,10 @@ export default function ExhibitView(props) {
             <Form layout="vertical">
                 <Form.Item className="form-group">
                     <p className="text-small text-grey">
-                        Add or delete languages. Deleting an language will also erasing its contents. Deletion will fail if the exhibit belongs to an exhibition and the deleting language
+                        Add or delete languages. Deleting an language will also erase its contents. Deletion will fail if the exhibit is belonged to an exhibition and the deleting language
                         is one of the languages the exhibition supports.
                     </p>
-                    <Form.Item name="languages" style={{ marginBottom: 0 }}>
+                    <Form.Item name="languages" style={{ marginBottom: 0 }} value={["ja"]}>
                         <LanguageSelect />
                     </Form.Item>
                 </Form.Item>
@@ -144,7 +154,9 @@ export default function ExhibitView(props) {
                     <p className="text-small text-grey">Select an language and edit its contents.</p>
                     <Form.Item name="language" style={{ marginBottom: 0 }}>
                         <Select placeholder="Select and Edit">
-
+                            {data && data.exhibit.Translation.map((value, index) => {
+                                return <Option value={value.Language_Code} key={index}><Badge status={value.Status === "Paused" ? "error" : "success"} text={codeTolanguage(value.Language_Code)} /></Option>
+                            })}
                         </Select>
                     </Form.Item>
                 </Form.Item>

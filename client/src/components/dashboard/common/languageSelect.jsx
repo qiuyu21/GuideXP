@@ -1,9 +1,10 @@
 import React from "react";
 import { Select } from "antd";
-import LANGUAGES from "../../../helper/languageHelper";
+import { LANGUAGES } from "../../../helper/languageHelper";
 const { Option } = Select;
 
-export default function LanguageSelect() {
+export default function LanguageSelect(props) {
+    const { defaultValues } = props;
     const languages = [];
     const keys = Object.keys(LANGUAGES);
     for (const key of keys) {
@@ -15,6 +16,7 @@ export default function LanguageSelect() {
             showSearch={false}
             showArrow={true}
             placeholder="Add Supportive Languages"
+            defaultValue={defaultValues}
         >
             {languages}
         </Select >

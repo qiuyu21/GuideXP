@@ -44,7 +44,7 @@ const columns = [
         title: "Action",
         key: "action",
         align: "center",
-        render: (text, record) => <Link to="#">View</Link>
+        render: (record) => <Link to={`/exhibit/${record.Exhibit}`}>View</Link>
     }
 ];
 

@@ -11,7 +11,7 @@ import {
 } from "antd";
 import Reditor from "../editor";
 import { InboxOutlined } from '@ant-design/icons';
-import LANGUAGES from "../../../helper/languageHelper";
+import { LANGUAGES } from "../../../helper/languageHelper";
 import { EditorState, convertToRaw } from "draft-js";
 import exhibitServices from "../../../services/exhibitServices";
 

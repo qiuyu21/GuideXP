@@ -1,4 +1,4 @@
-const ARABIC = { code: "ar", language: "Arabic" };
+// const ARABIC = { code: "ar", language: "Arabic" };
 const CHINESE_SIMPLIFIED = { code: "zh-cn", language: "Chinese Simplified" };
 const CHINESE_TRADITIONAL = { code: "zh-tw", language: "Chinese Traditional" };
 const CZECH = { code: "cs", language: "Czech" };
@@ -20,8 +20,20 @@ const SWEDISH = { code: "sv", language: "Swedish" };
 const THAI = { code: "th", language: "Thai" };
 const VIETNAMESE = { code: "vi", language: "Vietnamese" };
 
-export default Object.freeze({
-  ARABIC,
+export function codeTolanguage(code) {
+  const found = Object.values(LANGUAGES).find(lan => lan.code === code);
+  if (found) return found.language;
+  return null;
+}
+
+export function languageTocode(language) {
+  const found = Object.values(LANGUAGES).find(lan => lan.language = language);
+  if (found) return found.code;
+  return null;
+}
+
+export const LANGUAGES = Object.freeze({
+  // ARABIC,
   CHINESE_SIMPLIFIED,
   CHINESE_TRADITIONAL,
   CZECH,
@@ -43,3 +55,10 @@ export default Object.freeze({
   THAI,
   VIETNAMESE,
 });
+
+
+export default {
+  LANGUAGES,
+  codeTolanguage,
+  languageTocode
+}
