@@ -8,7 +8,7 @@ module.exports = function (mongoose) {
     },
     Status: {
       type: String,
-      enum: ["Created", "Ready", "Paused", "Deleted"],
+      enum: ["Ready", "Paused", "Deleted"],
       required: true,
     },
     Lock: {

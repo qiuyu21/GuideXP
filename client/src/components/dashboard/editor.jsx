@@ -11,9 +11,7 @@ export default class Reditor extends React.Component {
     super(props);
     this.editorState = this.props.editorState;
     this.descriptionError = this.props.descriptionError;
-
     this.focus = () => { this.refs.editor.focus(); }
-
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
     this.toggleBlockType = this._toggleBlockType.bind(this);

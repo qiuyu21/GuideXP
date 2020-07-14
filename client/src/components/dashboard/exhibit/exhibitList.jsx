@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Descriptions, Breadcrumb, Table, Tooltip, Badge } from "antd";
+import { Descriptions, Breadcrumb, Table, Badge } from "antd";
 import exhibitService from "../../../services/exhibitServices";
 import { Link } from "react-router-dom";
 import moment from "moment";

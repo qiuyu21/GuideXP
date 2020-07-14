@@ -1,11 +1,26 @@
 const { status_codes, error_codes } = require("../helper/responseHelper");
+const ROLE = require("../helper/roleHelper");
 
 function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History, Translation) {
 
   async function getSingleExhibit(req, res) {
     const msg = {};
     const exhibit_id = req.params.exhibitId;
-
+    let result;
+    if (req.user.Role === ROLE.GUIDEXP) {
+      result = await Exhibit.findOne({ _id: exhibit_id }).lean();
+    } else {
+      const p1 = Exhibit.findOne({ Customer: req.user.Customer, _id: exhibit_id }).select("_id Exhibition Status Exhibit_Identifier Name Audio_Path Description Translation.Language_Code Translation.Status").lean();
+      const p2 = Exhibition.find({ Customer: req.user.Customer }).select("_id Name");
+      result = await Promise.all([p1, p2]);
+    }
+    if (result) {
+      res.status(status_codes.OK).send(result);
+    } else {
+      msg.code = error_codes.ERROR_EXHIBIT_NOT_FOUND;
+      msg.message = `Exhibit with id:${exhibit_id} not found in the database`;
+      res.status(status_codes.NOT_FOUND).send(msg);
+    }
   }
 
 
@@ -82,14 +97,14 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     exhibit.Customer = req.user.Customer;
     exhibit.Name = name;
     if (exhibition) exhibit.Exhibition = exhibition;
-    exhibit.Status = "Created";
+    exhibit.Status = "Paused";
     exhibit.Description = JSON.stringify(description);
     //Add the translation
     const exhibit_translation = [];
     if (exhibition) {
       exhibition_languages.forEach((value) => {
         const translation = new Translation();
-        translation.Status = "Created";
+        translation.Status = "Paused";
         translation.Language_Code = value;
         translation.Description = [];
         exhibit_translation.push(translation);
@@ -97,7 +112,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     } else {
       languages.forEach((value) => {
         const translation = new Translation();
-        translation.Status = "Created";
+        translation.Status = "Paused";
         translation.Language_Code = value;
         translation.Description = [];
         exhibit_translation.push(translation);
@@ -127,11 +142,11 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     const exhibition = new Exhibition();
     exhibition.Customer = req.user.Customer;
     exhibition.Name = name;
-    exhibition.Stauts = "Created";
+    exhibition.Stauts = "Paused";
     const exhibition_languages = [];
     languages.forEach((value) => {
       const translation = new Translation();
-      translation.Status = "Created";
+      translation.Status = "Paused";
       translation.Language_Code = value;
       translation.Description = [];
       exhibition_languages.push(translation);

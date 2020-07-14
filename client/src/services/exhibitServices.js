@@ -16,7 +16,13 @@ export async function getAllExhibits({ page, col, order }) {
     return data;
 }
 
+export async function getSingleExhibit(exhibitId) {
+    const { data } = await http.get(endpoint + `/${exhibitId}`);
+    return data;
+}
+
 export default {
     postNewExhibit,
-    getAllExhibits
+    getAllExhibits,
+    getSingleExhibit
 };
