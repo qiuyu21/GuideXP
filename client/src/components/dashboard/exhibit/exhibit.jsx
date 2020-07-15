@@ -113,12 +113,13 @@ export default function Exhibit({ setLoading }) {
                             </Select>
                         </Form.Item>
 
-                        <Form.Item label="Audio" className="custom-flex">
-                            <Form.Item name="audio" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-                                <Upload.Dragger name="files" action="/upload.do" accept="audio/*" beforeUpload={() => false}>
+                        <Form.Item label="Audio/Thumbnail" className="custom-flex">
+                            <Form.Item name="files" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+                                <Upload.Dragger name="files" accept="audio/*,image/*"
+                                    beforeUpload={() => { return false; }}>
                                     <p className="ant-upload-drag-icon"><InboxOutlined /></p>
                                     <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                    <p className="ant-upload-hint">Upload an audio file</p>
+                                    <p className="ant-upload-hint">Upload an audio file or a thumbnail</p>
                                 </Upload.Dragger>
                             </Form.Item>
                         </Form.Item>

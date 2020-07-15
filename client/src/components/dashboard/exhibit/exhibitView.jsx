@@ -21,7 +21,7 @@ export default function ExhibitView(props) {
                 const [exhibit, exhibition] = await exhibitService.getSingleExhibit(exhibit_id);
                 exhibit.Description = JSON.parse(exhibit.Description);
                 exhibit.defaultValues = exhibit.Translation.map((value) => { return value.Language_Code });
-                console.log(exhibit);
+                // console.log(exhibit);
                 setEditorState(EditorState.createWithContent(convertFromRaw(exhibit.Description)))
                 setData({ exhibit, exhibition });
             } catch (ex) {
@@ -137,7 +137,7 @@ export default function ExhibitView(props) {
                         Add or delete languages. Deleting an language will also erase its contents. Deletion will fail if the exhibit is belonged to an exhibition and the deleting language
                         is one of the languages the exhibition supports.
                     </p>
-                    <Form.Item name="languages" style={{ marginBottom: 0 }} value={["ja"]}>
+                    <Form.Item name="languages" style={{ marginBottom: 0 }}>
                         <LanguageSelect />
                     </Form.Item>
                 </Form.Item>

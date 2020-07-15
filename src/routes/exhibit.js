@@ -4,11 +4,13 @@ const db = require("../db/db");
 const { User, Customer, Exhibit, Exhibition, Access, History, Translation } = db.models;
 const { mongoose } = db;
 
+
 //Middlewares
 const asyncMiddleware = require("../middleware/async");
 const authenticationMiddleware = require("../middleware/token");
 const authorizationMiddleware = require("../middleware/auth");
 const validateMiddleware = require("../middleware/validate");
+
 
 //Controllers
 const exhibitController = require("../controllers/exhibitController");
@@ -21,7 +23,6 @@ const {
 } = exhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History, Translation);
 
 router.use(authenticationMiddleware);
-
 
 /**
  * Permission: GUIDEXP MANAGER STAFF

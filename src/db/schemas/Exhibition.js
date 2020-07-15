@@ -32,6 +32,7 @@ module.exports = function (mongoose) {
       type: String,
       required: true,
     },
+    Thumbnail_Path: String,
     Translation: [require("./Translation")(mongoose)],
     Last_Modified: Date,
   });
