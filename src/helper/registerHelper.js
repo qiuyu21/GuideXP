@@ -77,6 +77,7 @@ function RegisterUserHelper(req, res, mongoose, User, Customer) {
     //return success response to client
     const msg = {};
     if (ROLE === RoleHelper.MANAGER) {
+      msg.id = customer_id;
       msg.message = `Customer ${data.name} has been created, and an email with activation link has been sent to ${data.email}`;
       res.status(status_codes.OK).send(msg);
     }

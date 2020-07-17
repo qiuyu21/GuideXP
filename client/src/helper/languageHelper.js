@@ -1,3 +1,5 @@
+//ISO639-1 langauge code standard
+
 // const ARABIC = { code: "ar", language: "Arabic" };
 const CHINESE_SIMPLIFIED = { code: "zh-cn", language: "Chinese Simplified" };
 const CHINESE_TRADITIONAL = { code: "zh-tw", language: "Chinese Traditional" };

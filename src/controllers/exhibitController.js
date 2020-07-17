@@ -10,7 +10,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
 
   async function getSingleExhibit(req, res) {
     const msg = {};
-    const exhibit_id = req.params.exhibitId;
+    const exhibit_id = req.params.exhibit_id;
     let result;
     if (req.user.Role === ROLE.GUIDEXP) {
       result = await Exhibit.findOne({ _id: exhibit_id }).lean();
@@ -70,10 +70,6 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     return res.status(status_codes.OK).send({ ...meta[0], exhibits });
   }
 
-  async function getAllExhibition(req, res) { }
-
-  async function getSingleExhibition(req, res) { }
-
   /**
   * MANAGER create a new exhibit
   * req.body: {name, exhibition, languages, audio, description}
@@ -81,6 +77,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
 
   async function postCreateSingleExhibit(req, res) {
     req.files = [];
+    //parse multipart data
     const busboy = new Busboy({ headers: req.headers });
     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
       // const saveTo = path.join(path.dirname(require.main.filename), "/public", path.basename(fieldname));
@@ -155,42 +152,52 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
   }
 
 
-  async function postCreateSingleExhibition(req, res) {
-    const { name, languages, description } = req.body;
+  async function getSingleExhibitofLanguage(req, res) {
     const msg = {};
-    const { blocks } = description;
-    const exhibition = new Exhibition();
-    exhibition.Customer = req.user.Customer;
-    exhibition.Name = name;
-    exhibition.Stauts = "Paused";
-    const exhibition_languages = [];
-    languages.forEach((value) => {
-      const translation = new Translation();
-      translation.Status = "Paused";
-      translation.Language_Code = value;
-      translation.Description = [];
-      exhibition_languages.push(translation);
-    })
-    exhibition_languages.forEach((value) => {
-      blocks.forEach((block) => {
-        const description_block = {};
-        description_block.Key = block.key;
-        value.Description.push(description_block);
-      })
-    })
-    await exhibition.save();
-    msg.message = { "_id": exhibition._id };
-    return res.status(status_codes.OK).send(msg);
-  }
+    const { exhibit_id, lang_code } = req.params;
+    //Retreat the exhibit 
+    const p1 = Exhibit.aggregate([
+      { $match: { Customer: mongoose.Types.ObjectId(req.user.Customer), _id: mongoose.Types.ObjectId(exhibit_id), } },
+      {
+        $project: {
+          Translation: {
+            $filter: {
+              input: '$Translation',
+              as: "translation",
+              cond: { $eq: ["$$translation.Language_Code", lang_code] }
+            }
+          },
+          _id: 1,
+          Name: 1,
+          Description: 1,
+        }
+      }
+    ]);
+    //Retreat the permission
+    const p2 = Access.findOne({ Customer: req.user.Customer, OnModel: "Exhibit", Model_Id: exhibit_id }).lean();
+    Promise.all([p1, p2]).then((values) => {
+      if (!values[0].length) {
+        //No exhibit found
+        msg.code = error_codes.ERROR_EXHIBIT_NOT_FOUND;
+        msg.message = `No exhibit found with id ${exhibit_id}`;
+        return res.status(status_codes.NOT_FOUND).send(msg);
+      };
+      const found_exhibit = values[0][0];
+      if (!found_exhibit.Translation.length) {
+        msg.code = error_codes.ERROR_TRANSLATION_NOT_FOUND;
+        msg.message = `Exhibit id ${exhibit_id} has no language with language code of ${lang_code}`;
+        return res.status(status_codes.NOT_FOUND).send(msg);
+      }
 
+      res.status(status_codes.OK).send(found_exhibit);
+    });
+  }
 
   return {
     getAllExhibit,
-    getAllExhibition,
     getSingleExhibit,
-    getSingleExhibition,
+    getSingleExhibitofLanguage,
     postCreateSingleExhibit,
-    postCreateSingleExhibition,
   };
 }
 

@@ -19,7 +19,7 @@ const {
     getAllExhibit,
     getSingleExhibit,
     postCreateSingleExhibit,
-
+    getSingleExhibitofLanguage,
 } = exhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access, History, Translation);
 
 router.use(authenticationMiddleware);
@@ -41,43 +41,43 @@ router.post("/", authorizationMiddleware(0b010), asyncMiddleware(postCreateSingl
  * Permission: GUIDEXP MANAGER STAFF
  * Get a single exhibit
  */
-router.get("/:exhibitId", authorizationMiddleware(0b111), asyncMiddleware(getSingleExhibit));
+router.get("/:exhibit_id", authorizationMiddleware(0b111), asyncMiddleware(getSingleExhibit));
 
 /**
  * Permission: GUIDEXP MANAGER STAFF
  * Get a single exhibit of a language
  */
-router.get("/:exhibitId/:lang_code", authorizationMiddleware(0b111), asyncMiddleware());
+router.get("/:exhibit_id/:lang_code", authorizationMiddleware(0b111), asyncMiddleware(getSingleExhibitofLanguage));
 
 /**
  * Permission: MANAGER STAFF
  * Update an exhibit of a language
  */
-router.put("/:exhibitId/:lang_code", authorizationMiddleware(0b011), asyncMiddleware());
+router.put("/:exhibit_id/:lang_code", authorizationMiddleware(0b011), asyncMiddleware());
 
 /**
  * Permission: MANAGER
  * Update an exhibit's English name and description
  */
-router.put("/update/:exhibitId", authorizationMiddleware(0b010), asyncMiddleware());
+router.put("/update/:exhibit_id", authorizationMiddleware(0b010), asyncMiddleware());
 
 /**
  * Permission: MANAGER
  * Update an exhibit's status and identifier
  */
-router.put("/update/option/:exhibitId", authorizationMiddleware(0b010), asyncMiddleware());
+router.put("/update/option/:exhibit_id", authorizationMiddleware(0b010), asyncMiddleware());
 
 /**
  * Permission: MANAGER
  * Update an exhibit's exhibition
  */
-router.put("/update/exhibition/:exhibitId", authorizationMiddleware(0b010), asyncMiddleware());
+router.put("/update/exhibition/:exhibit_id", authorizationMiddleware(0b010), asyncMiddleware());
 
 /**
  * Permission: MANAGER
  * Update an exhibit's support languages
  */
-router.put("/update/language/:exhibitId", authorizationMiddleware(0b010), asyncMiddleware());
+router.put("/update/language/:exhibit_id", authorizationMiddleware(0b010), asyncMiddleware());
 
 
 /**

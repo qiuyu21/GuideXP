@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -9,14 +9,27 @@ import {
   CreditCardOutlined,
   SettingOutlined,
   LogoutOutlined,
-  TranslationOutlined,
 } from "@ant-design/icons";
 
 const { SubMenu } = Menu;
 
 export default function Manager({ handleLogout }) {
+
+  const rootSubmenuKeys = ["exhibit", "exhibition", "user"];
+
+  const [currentOpenKeys, setCurrentOpenKeys] = useState([]);
+
+  const onOpenChange = openKeys => {
+    const latestOpenKey = openKeys.find(key => currentOpenKeys.indexOf(key) === -1);
+    if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+      setCurrentOpenKeys(openKeys);
+    } else {
+      setCurrentOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    }
+  }
+
   return (
-    <Menu mode="inline">
+    <Menu mode="inline" onOpenChange={onOpenChange} openKeys={currentOpenKeys}>
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
         <Link to="#">Dashboard</Link>
       </Menu.Item>
@@ -49,8 +62,8 @@ export default function Manager({ handleLogout }) {
       <Menu.Item key="subscription" mode="inline" icon={<CreditCardOutlined />}>
         <Link to="#">Subscription</Link>
       </Menu.Item>
-      <Menu.Item key="setting" mode="inline" icon={<SettingOutlined />}>
-        <Link to="#">Setting</Link>
+      <Menu.Item key="profile" mode="inline" icon={<SettingOutlined />}>
+        <Link to="#">Profile</Link>
       </Menu.Item>
       <Menu.Item
         key="logout"

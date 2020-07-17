@@ -11,7 +11,8 @@ import {
 } from "antd";
 import moment from "moment";
 import userService from "../../../services/userServices";
-import { error_codes, status_codes } from "../../../helper/responseHelper";
+import { status_codes } from "../../../helper/responseHelper";
+import { Link } from "react-router-dom";
 
 const layout = {
   labelCol: { span: 6 },
@@ -22,30 +23,39 @@ const tailLayout = {
   wrapperCol: { offset: 6, span: 18 },
 };
 
-export default function NewCustomer() {
+export default function NewCustomer(props) {
+  const { setLoading: submitLoading } = props;
   const [form] = Form.useForm();
   const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState({ isSuccess: false, successMsg: {} });
+
   const disableDate = (currentDate) => {
     return currentDate && currentDate < moment().endOf("day");
   };
 
-  const doSubmit = (values) => {
+  const doSubmit = async (values) => {
     try {
-      const response = userService.postNewCustomer(values);
+      submitLoading(true);
+      const response = await userService.postNewCustomer(values);
+      const succ = { ...success };
+      succ.isSuccess = true;
+      succ.successMsg = response;
+      setSuccess(succ);
     } catch (ex) {
-      console.log(ex.reponse);
       if (ex.response && ex.response.status === status_codes.FORBIDDEN) {
-        console.log(ex.response);
+        //Email has been registered
+        form.setFields([{ name: "email", errors: [ex.response.data.message] }]);
       }
     }
+    submitLoading(false);
+
   };
 
   return (
     <div className="dashboard-content-container">
       <Spin spinning={loading}>
-        {!success && (
+        {!success.isSuccess && (
           <Fragment>
             <Breadcrumb style={{ marginBottom: "16px" }}>
               <Breadcrumb.Item>Customer</Breadcrumb.Item>
@@ -56,6 +66,7 @@ export default function NewCustomer() {
               form={form}
               {...layout}
               onFinish={(values) => {
+                console.log(values);
                 //calculate the days differences
                 if (values.days) {
                   const now = moment().startOf("day");
@@ -149,6 +160,10 @@ export default function NewCustomer() {
             </Form>
           </Fragment>
         )}
+        {success.isSuccess && <Result status="success" title={success.successMsg.message} extra={[
+          <Button type="primary" key="list"><Link to="/customer/list">Customer List</Link></Button>,
+          <Button key="view"><Link to={`/customer/details/${success.successMsg.id}`}>View Customer</Link></Button>,
+        ]} />}
       </Spin>
     </div>
   );

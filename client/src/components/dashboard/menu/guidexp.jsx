@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -14,6 +14,7 @@ import {
 const { SubMenu } = Menu;
 
 export default function Guidexp({ handleLogout }) {
+
   return (
     <Menu mode="inline">
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
@@ -36,8 +37,8 @@ export default function Guidexp({ handleLogout }) {
       <Menu.Item key="user" mode="inline" icon={<TeamOutlined />}>
         <Link to="#">User</Link>
       </Menu.Item>
-      <Menu.Item key="setting" mode="inline" icon={<SettingOutlined />}>
-        <Link to="#">Setting</Link>
+      <Menu.Item key="profile" mode="inline" icon={<SettingOutlined />}>
+        <Link to="#">Profile</Link>
       </Menu.Item>
       <Menu.Item
         key="logout"

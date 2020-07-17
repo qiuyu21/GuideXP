@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -9,7 +9,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 
-export default function Staff(props) {
+export default function Staff() {
   return (
     <Menu>
       <Menu.Item key="dashboard" mode="inline" icon={<DashboardOutlined />}>
@@ -21,8 +21,8 @@ export default function Staff(props) {
       <Menu.Item key="exhibition" mode="inline" icon={<AppstoreOutlined />}>
         <Link>Exhibition</Link>
       </Menu.Item>
-      <Menu.Item key="setting" mode="inline" icon={<SettingOutlined />}>
-        <Link>Setting</Link>
+      <Menu.Item key="profile" mode="inline" icon={<SettingOutlined />}>
+        <Link>Profile</Link>
       </Menu.Item>
       <Menu.Item key="logout" mode="inline" icon={<LogoutOutlined />}>
         <Link>Log out</Link>

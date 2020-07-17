@@ -27,13 +27,19 @@ export async function getAllExhibits({ page, col, order }) {
     return data;
 }
 
-export async function getSingleExhibit(exhibitId) {
-    const { data } = await http.get(endpoint + `/${exhibitId}`);
+export async function getSingleExhibit(exhibit_id) {
+    const { data } = await http.get(endpoint + `/${exhibit_id}`);
+    return data;
+}
+
+export async function getSingleExhibitLanguage(exhibit_id, language_code) {
+    const { data } = await http.get(endpoint + `/${exhibit_id}/${language_code}`);
     return data;
 }
 
 export default {
-    postNewExhibit,
     getAllExhibits,
-    getSingleExhibit
+    getSingleExhibit,
+    getSingleExhibitLanguage,
+    postNewExhibit,
 };
