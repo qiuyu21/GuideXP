@@ -22,6 +22,7 @@ const SWEDISH = { code: "sv", language: "Swedish" };
 const THAI = { code: "th", language: "Thai" };
 const VIETNAMESE = { code: "vi", language: "Vietnamese" };
 
+
 export function codeTolanguage(code) {
   const found = Object.values(LANGUAGES).find(lan => lan.code === code);
   if (found) return found.language;

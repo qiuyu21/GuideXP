@@ -14,6 +14,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import { LANGUAGES } from "../../../helper/languageHelper";
 import { EditorState, convertToRaw } from "draft-js";
 import exhibitServices from "../../../services/exhibitServices";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -32,6 +33,7 @@ export default function Exhibit({ setLoading }) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [descriptionError, setDescriptionError] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [exhibitId, setExhibitId] = useState({});
     const keys = Object.keys(LANGUAGES);
     for (const key of keys) {
         languages.push(<Option key={LANGUAGES[key].code}>{LANGUAGES[key].language}</Option>)
@@ -65,7 +67,8 @@ export default function Exhibit({ setLoading }) {
                 data.description = convertToRaw(editorState.getCurrentContent());
                 try {
                     setLoading(true);
-                    await exhibitServices.postNewExhibit(data);
+                    const response = await exhibitServices.postNewExhibit(data);
+                    setExhibitId(response.message.exhibit);
                     setSubmitSuccess(true);
                 } catch (ex) {
 
@@ -79,7 +82,6 @@ export default function Exhibit({ setLoading }) {
             }
         })
     }
-
 
     return (
         <div className="dashboard-content-container">
@@ -141,8 +143,8 @@ export default function Exhibit({ setLoading }) {
                     status="success"
                     title="New Exhibit Has Been Created!"
                     extra={[
-                        <Button type="primary">View Exhibit</Button>,
-                        <Button>Add Translation</Button>
+                        <Button type="primary" key="view"><Link to={`/exhibit/${exhibitId}`}>View Exhibit</Link></Button>,
+                        <Button key="add">Add Translation</Button>
                     ]}
                 />}
         </div>

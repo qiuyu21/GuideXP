@@ -12,9 +12,7 @@ export async function postNewExhibit(data) {
             for (const file of data[key]) {
                 formData.append(file.name, file.originFileObj);
             }
-        } else if (key === "description") {
-            formData.append(key, JSON.stringify(value));
-        } else formData.append(key, value);
+        } else formData.append(key, JSON.stringify(value));
     }
     const { data: response } = await http.post(endpoint, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
     return response;

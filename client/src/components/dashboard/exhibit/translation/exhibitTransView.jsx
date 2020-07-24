@@ -1,16 +1,18 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Breadcrumb, Button, Form, Badge, Input, Select, Space, Result, Spin } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Form, Badge, Tabs, Select, Menu, Result, Spin } from "antd";
+// import { UploadOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import { codeTolanguage } from "../../../../helper/languageHelper";
 import exhibitService from "../../../../services/exhibitServices";
 import { status_codes } from "../../../../helper/responseHelper";
 
+const { TabPane } = Tabs;
+
 export default function ExhibitTranslationView(props) {
 
     const { id, lan } = props.computedMatch.params;
     const [initialLoading, setInitialLoading] = useState({ loading: false, isValidParams: true, resultText: "" });
-    const [exhibitData, setExhibitData] = useState(null);
+    const [exhibitData, setExhibitData] = useState({ languages: null, data: null, access: null });
 
     useEffect(() => {
         //First check if the language is a valid language in our file
@@ -26,9 +28,9 @@ export default function ExhibitTranslationView(props) {
         //Get the exhibit
         async function getExhibit() {
             try {
-                const data = await exhibitService.getSingleExhibitLanguage(id, lan);
-                data.Description = JSON.parse(data.Description);
-                setExhibitData(data);
+                const edata = await exhibitService.getSingleExhibitLanguage(id, lan);
+                edata.data.Description = JSON.parse(edata.data.Description);
+                setExhibitData(edata);
                 const lstatus = { ...initialLoading };
                 lstatus.loading = false;
                 setInitialLoading(lstatus);
@@ -47,6 +49,26 @@ export default function ExhibitTranslationView(props) {
         getExhibit();
     }, []);
 
+    const menu = (
+        exhibitData.languages && exhibitData.languages.length > 1 && (
+            <Menu>
+                {
+                    exhibitData.languages.filter((value) => {
+                        return value !== lan;
+                    }).map((value, index) => {
+                        return (
+                            <Menu.Item key={index}>
+                                <Link to={`/exhibit/${id}/${value}`}>
+                                    {codeTolanguage(value)}
+                                </Link>
+                            </Menu.Item>
+                        )
+                    })
+                }
+            </Menu>
+        )
+    );
+
     return (
         <div className="dashboard-content-container">
             <Spin spinning={initialLoading.loading}>
@@ -54,15 +76,15 @@ export default function ExhibitTranslationView(props) {
                     <Fragment>
                         <Breadcrumb style={{ marginBottom: "16px" }}>
                             <Breadcrumb.Item><Link to="/exhibit/list">Exhibit</Link></Breadcrumb.Item>
-                            <Breadcrumb.Item><Link to={`/exhibit/${id}`}>{exhibitData && exhibitData.Name}</Link></Breadcrumb.Item>
-                            <Breadcrumb.Item>{codeTolanguage(lan)}</Breadcrumb.Item>
+                            <Breadcrumb.Item><Link to={`/exhibit/${id}`}>{exhibitData.data && exhibitData.data["Name"]}</Link></Breadcrumb.Item>
+                            <Breadcrumb.Item overlay={menu}>{codeTolanguage(lan)}</Breadcrumb.Item>
                         </Breadcrumb>
                         <div className="ViewHead">
                             <h2 className="Heading">Options</h2>
                         </div>
 
                         <Form layout="vertical" >
-                            <Form.Item label="Status" className="form-group">
+                            {/* <Form.Item label="Status" className="form-group">
                                 <p className="text-small text-grey">
                                     You can only change the status to "Ready" once you have finished with all translations. To enable public access to this exhibit's translation,
                                     you must set this status to "Ready" and the status located at this exhibit's main page to "Ready".
@@ -75,7 +97,7 @@ export default function ExhibitTranslationView(props) {
                                         <Select.Option value="paused">Paused</Select.Option>
                                     </Select>
                                 </Form.Item>
-                            </Form.Item>
+                            </Form.Item> */}
 
                             <Form.Item label="Permission" className="form-group">
                                 <p className="text-small text-grey">
@@ -93,7 +115,7 @@ export default function ExhibitTranslationView(props) {
                             </Form.Item>
                         </Form>
 
-                        <div className="ViewHead">
+                        {/* <div className="ViewHead">
                             <h2 className="Heading">Audio</h2>
                         </div>
                         <Form layout="vertical">
@@ -101,18 +123,20 @@ export default function ExhibitTranslationView(props) {
                                 <p className="text-small text-grey">
                                     Add an audio in {codeTolanguage(lan)} for this exhibit.
                             </p>
-                                {/* <Form.Item name="audio" style={{ marginBottom: 0 }}>
-
-                            </Form.Item> */}
                             </Form.Item>
                             <Form.Item>
                                 <Button htmlType="button">Update</Button>
                             </Form.Item>
-                        </Form>
+                        </Form> */}
 
                         <div className="ViewHead">
                             <h2 className="Heading">Translation</h2>
                         </div>
+                        <Tabs defaultActiveKey="1">
+                            <TabPane tab={<Badge status="success" text="Title" />} key="1">
+                                Content of Tab Pane 1
+                            </TabPane>
+                        </Tabs>
                     </Fragment>
                 }
             </Spin>

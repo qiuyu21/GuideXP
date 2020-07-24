@@ -77,6 +77,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
 
   async function postCreateSingleExhibit(req, res) {
     req.files = [];
+
     //parse multipart data
     const busboy = new Busboy({ headers: req.headers });
     busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
@@ -86,10 +87,18 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
       file.resume();
     });
     busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-      req.body[fieldname] = val;
+      if (val === "undefined") {
+        req.body[fieldname] = null;
+      } else {
+        req.body[fieldname] = JSON.parse(val);
+      }
+      if (fieldname === "description") {
+        //Keep an copy of the unparse description
+        req.body.unparseDescription = val;
+      }
     });
     busboy.on('finish', async function () {
-      const { name, exhibition, languages, description } = req.body;
+      const { name, exhibition, languages, description, unparseDescription } = req.body;
       const msg = {};
       let exhibition_languages = [];
       //If this is part of an exhibition, check if the exhibition exists
@@ -111,7 +120,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
       exhibit.Name = name;
       if (exhibition) exhibit.Exhibition = exhibition;
       exhibit.Status = "Paused";
-      exhibit.Description = description;
+      exhibit.Description = unparseDescription;
       //Add the translation
       const exhibit_translation = [];
       if (exhibition) {
@@ -131,8 +140,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
           exhibit_translation.push(translation);
         });
       }
-      const parsed_description = JSON.parse(description);
-      const { blocks } = parsed_description;
+      const { blocks } = description;
       //Save the references to each block 
       exhibit_translation.forEach((value) => {
         blocks.forEach((block) => {
@@ -145,7 +153,7 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
       //Save the exhibit
       await exhibit.save();
       //Return the id to the client
-      msg.message = { "_id": exhibit._id };
+      msg.message = { exhibit: exhibit._id };
       return res.status(status_codes.OK).send(msg);
     });
     req.pipe(busboy);
@@ -159,36 +167,47 @@ function ExhibitController(mongoose, User, Customer, Exhibit, Exhibition, Access
     const p1 = Exhibit.aggregate([
       { $match: { Customer: mongoose.Types.ObjectId(req.user.Customer), _id: mongoose.Types.ObjectId(exhibit_id), } },
       {
-        $project: {
-          Translation: {
-            $filter: {
-              input: '$Translation',
-              as: "translation",
-              cond: { $eq: ["$$translation.Language_Code", lang_code] }
+        $facet: {
+          languages: [{ $project: { _id: 0, Translation: { $map: { input: '$Translation', as: 'translation', in: "$$translation.Language_Code" } } } }],
+          data: [{
+            $project: {
+              Translation: {
+                $filter: {
+                  input: '$Translation',
+                  as: "translation",
+                  cond: { $eq: ["$$translation.Language_Code", lang_code] }
+                },
+              },
+              _id: 1,
+              Name: 1,
+              Description: 1
             }
-          },
-          _id: 1,
-          Name: 1,
-          Description: 1,
+          }
+          ]
         }
       }
     ]);
     //Retreat the permission
     const p2 = Access.findOne({ Customer: req.user.Customer, OnModel: "Exhibit", Model_Id: exhibit_id }).lean();
     Promise.all([p1, p2]).then((values) => {
-      if (!values[0].length) {
+      const [exhibit, access] = values;
+      if (!exhibit[0].data.length) {
         //No exhibit found
         msg.code = error_codes.ERROR_EXHIBIT_NOT_FOUND;
         msg.message = `No exhibit found with id ${exhibit_id}`;
         return res.status(status_codes.NOT_FOUND).send(msg);
       };
-      const found_exhibit = values[0][0];
-      if (!found_exhibit.Translation.length) {
+      const found_exhibit = exhibit[0];
+      found_exhibit.languages = found_exhibit.languages[0]["Translation"];
+      found_exhibit.data = found_exhibit.data[0];
+      if (!found_exhibit.data.Translation.length) {
         msg.code = error_codes.ERROR_TRANSLATION_NOT_FOUND;
         msg.message = `Exhibit id ${exhibit_id} has no language with language code of ${lang_code}`;
         return res.status(status_codes.NOT_FOUND).send(msg);
+      } else {
+        found_exhibit.data.Translation = found_exhibit.data.Translation[0];
       }
-
+      found_exhibit.access = access;
       res.status(status_codes.OK).send(found_exhibit);
     });
   }
