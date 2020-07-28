@@ -133,9 +133,20 @@ export default function ExhibitTranslationView(props) {
                             <h2 className="Heading">Translation</h2>
                         </div>
                         <Tabs defaultActiveKey="1">
-                            <TabPane tab={<Badge status="success" text="Title" />} key="1">
-                                Content of Tab Pane 1
-                            </TabPane>
+                            {exhibitData.data &&
+                                <TabPane tab={<Badge status="success" text="Name" />} key="0">
+                                    Content of Tab Pane 1
+                                </TabPane>
+                            }
+                            {exhibitData.data &&
+                                exhibitData.data.Translation.Description.map((value, index) => {
+                                    return (
+                                        <TabPane key={index + 1} tab={<Badge status="success" text={`Description ${index + 1}`} />}>
+
+                                        </TabPane>
+                                    )
+                                })
+                            }
                         </Tabs>
                     </Fragment>
                 }

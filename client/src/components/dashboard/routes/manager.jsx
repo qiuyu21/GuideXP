@@ -8,6 +8,9 @@ import ExhibitTranslationView from "../exhibit/translation/exhibitTransView";
 import Exhibition from "../exhibition/exhibition";
 import ManagerDashboard from "../role/managerDashboard";
 
+//
+import ControlDropdown from "../common/editordropdown";
+
 export default function ManagerRoutes({ setLoading }) {
     return (
         <Switch>
@@ -35,6 +38,10 @@ export default function ManagerRoutes({ setLoading }) {
                 path="/exhibition/new"
                 component={Exhibition}
                 setLoading={setLoading}
+            />
+            <RouteProtected
+                path="/test"
+                component={ControlDropdown}
             />
             <RouteProtected path="/dashboard" component={ManagerDashboard} />
             <Redirect from="/" to="/dashboard" component={ManagerDashboard} />

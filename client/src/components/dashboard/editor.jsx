@@ -3,9 +3,12 @@ import {
   Editor,
   getDefaultKeyBinding,
   RichUtils,
+  Modifier,
+  EditorState,
 } from "draft-js";
 import "./editor.css";
 import "../../../node_modules/draft-js/dist/Draft.css";
+
 export default class Reditor extends React.Component {
   constructor(props) {
     super(props);
@@ -48,9 +51,39 @@ export default class Reditor extends React.Component {
   }
 
   _toggleInlineStyle(inlineStyle) {
-    this.props.descriptionOnChange(
-      RichUtils.toggleInlineStyle(this.props.editorState, inlineStyle)
-    );
+
+    if (["red", "orange"].includes(inlineStyle)) {
+      //Editor state
+      const eState = this.props.editorState;
+      const selection = eState.getSelection();
+
+      const reducer = (contentState, color) => Modifier.removeInlineStyle(contentState, selection, color);
+      //Turn off all active colors
+      const nextContentState = ["red", "orange"].reduce(reducer, eState.getCurrentContent());
+
+      let nextEditorState = EditorState.push(eState, nextContentState, 'change-inline-style');
+
+      const currentStyle = eState.getCurrentInlineStyle();
+
+      if (selection.isCollapsed()) {
+        nextEditorState = currentStyle.reduce((state, color) => {
+          return RichUtils.toggleInlineStyle(state, color);
+        }, nextEditorState);
+      }
+
+      if (!currentStyle.has(inlineStyle)) {
+        nextEditorState = RichUtils.toggleInlineStyle(nextEditorState, inlineStyle);
+      }
+
+      this.props.descriptionOnChange(
+        RichUtils.toggleInlineStyle(nextEditorState)
+      );
+    } else {
+
+      this.props.descriptionOnChange(
+        RichUtils.toggleInlineStyle(this.props.editorState, inlineStyle)
+      );
+    }
   }
 
   render() {
@@ -76,6 +109,7 @@ export default class Reditor extends React.Component {
           editorState={this.props.editorState}
           onToggle={this.toggleInlineStyle}
         />
+
         <div className={className} onClick={this.focus}>
           <Editor
             blockStyleFn={getBlockStyle}
@@ -103,6 +137,15 @@ const styleMap = {
     fontSize: 16,
     padding: 2,
   },
+  RED: {
+    color: 'rgba(255, 0, 0, 1.0)',
+  },
+  GREEN: {
+    color: 'rgba(0, 255, 0, 1.0)',
+  },
+  BLUE: {
+    color: 'ragb(0, 0, 255, 1.0)'
+  }
 };
 
 function getBlockStyle(block) {
@@ -136,6 +179,7 @@ class StyleButton extends React.Component {
     );
   }
 }
+
 
 const BLOCK_TYPES = [
   { label: "H1", style: "header-one" },
@@ -173,58 +217,6 @@ const BlockStyleControls = (props) => {
   );
 };
 
-const COLORS = [
-  { label: 'Red', style: 'red' },
-  { label: 'Orange', style: 'orange' },
-  { label: 'Yellow', style: 'yellow' },
-  { label: 'Green', style: 'green' },
-  { label: 'Blue', style: 'blue' },
-  { label: 'Indigo', style: 'indigo' },
-  { label: 'Violet', style: 'violet' },
-];
-
-const colorStyleMap = {
-  red: {
-    color: 'rgba(255, 0, 0, 1.0)',
-  },
-  orange: {
-    color: 'rgba(255, 127, 0, 1.0)',
-  },
-  yellow: {
-    color: 'rgba(180, 180, 0, 1.0)',
-  },
-  green: {
-    color: 'rgba(0, 180, 0, 1.0)',
-  },
-  blue: {
-    color: 'rgba(0, 0, 255, 1.0)',
-  },
-  indigo: {
-    color: 'rgba(75, 0, 130, 1.0)',
-  },
-  violet: {
-    color: 'rgba(127, 0, 255, 1.0)',
-  },
-};
-
-const ColorControls = (props) => {
-  var currentStyle = props.editorState.getCurrentInlineStyle();
-  return (
-    <div style={styles.controls}>
-      {COLORS.map(type =>
-        <StyleButton
-          key={type.label}
-          active={currentStyle.has(type.style)}
-          label={type.label}
-          onToggle={props.onToggle}
-          style={type.style}
-        />
-      )}
-    </div>
-  );
-};
-
-
 var INLINE_STYLES = [
   { label: "Bold", style: "BOLD" },
   { label: "Italic", style: "ITALIC" },
@@ -234,7 +226,6 @@ var INLINE_STYLES = [
 
 const InlineStyleControls = (props) => {
   const currentStyle = props.editorState.getCurrentInlineStyle();
-
   return (
     <div className="RichEditor-controls">
       {INLINE_STYLES.map((type) => (
@@ -249,3 +240,25 @@ const InlineStyleControls = (props) => {
     </div>
   );
 };
+
+
+var COLORS = [
+  { label: "rgba(0, 0, 0, 1.0)", style: "BLACK" },
+  { label: "rgba(255, 0, 0, 1.0)", style: "RED" },
+  { label: "rgba(0,255, 0, 1.0)", style: "GREEN" },
+  { label: "rgba(0, 0, 255, 1.0)", style: "BLUE" }
+];
+
+const ColorControl = (props) => {
+  const currentStyle = props.editorState.getCurrentInlineStyle();
+
+};
+
+
+
+var FONTS = [
+
+];
+const FontControl = (props) => {
+
+}

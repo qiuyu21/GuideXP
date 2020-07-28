@@ -155,7 +155,7 @@ export default function ExhibitView(props) {
                         props.history.push(`/exhibit/${exhibit_id}/${value.language}`);
                     }}>
                         <Form.Item className="form-group">
-                            <p className="text-small text-grey">Select an language and edit its contents.</p>
+                            <p className="text-small text-grey">Select a language and edit its contents.</p>
                             <Form.Item name="language" style={{ marginBottom: 0 }}>
                                 <Select placeholder="Select and Edit" allowClear>
                                     {data && data.exhibit.Translation.map((value, index) => {

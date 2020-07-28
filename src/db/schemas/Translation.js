@@ -15,7 +15,6 @@ module.exports = function (mongoose) {
     Audio_Path: String,
     Description: [
       {
-        Hash: String,
         Key: String,
         Value: String
       }

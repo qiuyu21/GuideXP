@@ -1,0 +1,27 @@
+.color-select{
+    position: relative;
+    box-sizing: border-box;
+    margin: 50px;
+    z-index: 1000;
+}
+
+.inline-block {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+}
+
+.display-none{
+    display: none;
+}
+
+.color-select-div{
+    box-sizing: border-box;
+    width: 96px;
+}
+
+.color-black {
+    background-color: rgba(0, 0, 0, 1.0);
+}
+
